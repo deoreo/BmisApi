@@ -1,4 +1,7 @@
 using BmisApi.Data;
+using BmisApi.Models;
+using BmisApi.Models.DTOs.Household;
+using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +27,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Repositories
-builder.Services.AddScoped<IResidentRepository, ResidentRepository>();
+builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
+builder.Services.AddScoped<ICrudRepository<Household>, HouseholdRepository>();
 
 // Services
-builder.Services.AddSingleton<ResidentService>();
+builder.Services.AddScoped
+    <ICrudService<GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
+builder.Services.AddScoped<
+    ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
 
 
 var app = builder.Build();

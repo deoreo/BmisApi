@@ -3,13 +3,25 @@
     public class Household
     {
         public int HouseholdId { get; set; }
-        public string? Address { get; set; }
-        public int? HeadId { get; set; }
-        public ICollection<Resident>? Members { get; set; }
+        public required string Address { get; set; }
+        public int HeadId { get; set; }
+        public required ICollection<Resident> Members { get; set; }
 
         // Crud ops
         public DateTime CreatedAt { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+
+        public Resident GetHead()
+        {
+            var head =  Members.FirstOrDefault(r => r.ResidentId == HeadId);
+
+            if (head == null)
+            {
+                throw new Exception($"Head not found in the household. HeadId: {HeadId}");
+            }
+
+            return head;
+        }
     }
 }

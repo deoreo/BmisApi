@@ -1,9 +1,9 @@
-﻿namespace BmisApi.Models.DTOs
+﻿namespace BmisApi.Models.DTOs.Resident
 {
     public record UpdateResidentRequest
         (string FullName, Sex Sex, DateOnly Birthday,
-        string? Occupation, bool RegisteredVoter, int? HouseholdId)
+        string? Occupation, bool RegisteredVoter)
     {
-        
+
     }
 }

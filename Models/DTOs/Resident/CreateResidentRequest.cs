@@ -1,4 +1,4 @@
-﻿namespace BmisApi.Models.DTOs
+﻿namespace BmisApi.Models.DTOs.Resident
 {
     public record CreateResidentRequest
         (string FullName, Sex Sex, DateOnly Birthday,

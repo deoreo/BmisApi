@@ -10,7 +10,7 @@
         public DateOnly Birthday { get; set; }
         public string? Occupation { get; set; }
         public bool RegisteredVoter { get; set; }
-        public bool HouseholdHead { get; set; }
+        public bool IsHouseholdHead { get; set; }
 
         // Household connection
         public int? HouseholdId { get; set; }
@@ -30,6 +30,20 @@
             Birthday = birthday;
             Occupation = occupation;
             RegisteredVoter = registeredVoter;
+        }
+
+        public int GetAge(DateOnly birthday)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            int age = today.Year - birthday.Year;
+
+
+            if (today < birthday.AddYears(age))
+            {
+                age--;
+            }
+
+            return age;
         }
     }
     public enum Sex 

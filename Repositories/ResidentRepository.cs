@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Repositories
 {
-    public class ResidentRepository : IResidentRepository
+    public class ResidentRepository : ICrudRepository<Resident>
     {
         // DbContext DI
         private readonly ApplicationDbContext _context;
@@ -13,25 +13,25 @@ namespace BmisApi.Repositories
             _context = context;
         }
 
-        public async Task<Resident?> GetResidentByIdAsync(int id)
+        public async Task<Resident?> GetByIdAsync(int id)
         {
             return await _context.Residents
                 .Include(r => r.Household)
-                .FirstOrDefaultAsync(x => x.ResidentId == id);
+                .FirstOrDefaultAsync(r => r.ResidentId == id);
         }
 
-        public async Task<Resident> CreateResidentAsync(Resident resident)
+        public async Task<Resident> CreateAsync(Resident entity)
         {
-            await _context.Residents.AddAsync(resident);
-            resident.CreatedAt = DateTime.UtcNow;
+            await _context.Residents.AddAsync(entity);
+            entity.CreatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            return resident;
+            return entity;
         }
 
-        public async Task DeleteResidentAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            var resident = await GetResidentByIdAsync(id);
+            var resident = await GetByIdAsync(id);
 
             if (resident is not null)
             {
@@ -40,42 +40,47 @@ namespace BmisApi.Repositories
             }
         }
 
-        public async Task UpdateResidentAsync(Resident resident)
+        public async Task UpdateAsync(Resident entity)
         {
-            if (resident.HouseholdId is not null)
-            {
-                await SetResidentHouseholdAsync(resident);
-            }
-            _context.Residents.Update(resident);
+            _context.Residents.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<Resident> GetAllResidentsAsync()
+        public async Task<List<Resident>> GetAllAsync()
         {
-            return _context.Residents.Include(r => r.Household).AsNoTracking();
+            return await _context.Residents.Include(r => r.Household).ToListAsync();
         }
-
-        public async Task SetResidentHouseholdAsync(Resident resident)
+        
+        public async Task<List<Resident>> GetManyByIdAsync(IEnumerable<int> ids)
         {
-            var household = await _context.Households.FindAsync(resident.HouseholdId);
-            if (household is not null)
+            if (ids == null || !ids.Any())
             {
-                resident.Household = household;
+                return new List<Resident>();
             }
+
+            var validIds = ids.Where(id => id > 0).ToList();
+            
+            var residents = await _context.Residents
+                .Include(r => r.Household)
+                .Where(r => ids.Contains(r.ResidentId))
+                .ToListAsync();
+
+            var notFoundIds = validIds.Except(residents.Select(r  => r.ResidentId));
+            if (notFoundIds.Any())
+            {
+                Console.WriteLine($"The following IDs were not found: {string.Join(", ", notFoundIds)}");
+            }
+
+            return residents;
         }
 
-        public IQueryable<Resident> Search(string name, Sex? sex)
+        public IQueryable<Resident> Search(string name)
         {
             var query = _context.Residents.Include(r => r.Household).AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(e => e.FullName.Contains(name));
-            }
-
-            if (sex is not null)
-            {
-                query = query.Where(e => e.Sex == sex);
             }
 
             return query.AsNoTracking();

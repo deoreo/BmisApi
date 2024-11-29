@@ -1,4 +1,5 @@
 ﻿using BmisApi.Models;
+using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
@@ -8,20 +9,20 @@ using Microsoft.EntityFrameworkCore;
 namespace BmisApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController] 
-    public class ResidentController : ControllerBase
+    [ApiController]
+    public class HouseholdController : ControllerBase
     {
         private readonly ICrudService
-            <GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
-        public ResidentController(ICrudService
-            <GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service)
+            <GetHouseholdResponse,GetAllHouseholdResponse,CreateHouseholdRequest,UpdateHouseholdRequest> _service;
+        public HouseholdController(ICrudService
+            <GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest> service)
         {
             _service = service;
         }
 
         [HttpGet]
         [Route("get/{id}")]
-        public async Task<ActionResult<GetResidentResponse>> GetResidentByIdAsync(int id)
+        public async Task<ActionResult<GetHouseholdResponse>> GetHouseholdByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
             if (response == null)
@@ -34,12 +35,12 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<GetResidentResponse>> CreateResidentAsync(CreateResidentRequest request)
-        { 
+        public async Task<ActionResult<GetHouseholdResponse>> CreateHouseholdAsync(CreateHouseholdRequest request)
+        {
             var response = await _service.CreateAsync(request);
             if (response == null)
             {
-                return BadRequest("Failed to register resident");
+                return BadRequest("Failed to register household.");
             }
 
             // TODO: Change to CREATED instead of OK
@@ -52,7 +53,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
-        public async Task<ActionResult> DeleteResidentAsync(int id)
+        public async Task<ActionResult> DeleteHouseholdAsync(int id)
         {
             await _service.DeleteAsync(id);
             return NoContent();
@@ -60,12 +61,12 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
-        public async Task<ActionResult<GetResidentResponse>> UpdateResidentAsync(int id, UpdateResidentRequest request)
+        public async Task<ActionResult<GetHouseholdResponse>> UpdateHouseholdAsync(int id, UpdateHouseholdRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
-            if ( response == null)
+            if (response is null)
             {
-                return BadRequest("Failed to update resident");
+                return BadRequest("Failed to update household");
             }
 
             return NoContent();
@@ -73,29 +74,15 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-all")]
-        public async Task<ActionResult<GetAllResidentResponse>> GetAllResidentAsync()
+        public async Task<ActionResult<GetAllHouseholdResponse>> GetAllHouseholdAsync()
         {
             var response = await _service.GetAllAsync();
             if (response == null)
             {
-                return BadRequest("Failed to get residents");
+                return BadRequest("Failed to get households");
             }
 
             return Ok(response);
         }
-
-        [HttpGet]
-        [Route("search")]
-        public async Task<ActionResult<GetAllResidentResponse>> Search(string name)
-        {
-            var result = await _service.Search(name);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-
-            return NotFound();
-        }
-
     }
 }

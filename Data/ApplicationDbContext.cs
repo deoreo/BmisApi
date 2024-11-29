@@ -32,7 +32,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.Birthday).IsRequired();
                 entity.Property(e => e.Occupation);
                 entity.Property(e => e.RegisteredVoter).IsRequired();
-                entity.Property(e => e.HouseholdHead).IsRequired().HasDefaultValue(false);
+                entity.Property(e => e.IsHouseholdHead).IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.LastUpdatedAt);
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
