@@ -13,7 +13,7 @@ namespace BmisApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20241129221144_identity")]
-    partial class identity
+    partial class Identity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

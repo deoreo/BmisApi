@@ -88,7 +88,7 @@ namespace BmisApi.Data
 
             modelBuilder.Entity<BrgyProject>(entity =>
             {
-                entity.HasKey(e => e.ProjectId).HasName("project_pkeys");
+                entity.HasKey(e => e.BrgyProjectId).HasName("project_pkeys");
 
                 entity.ToTable("projects");
 

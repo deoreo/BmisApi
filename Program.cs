@@ -47,9 +47,9 @@ builder.Services.AddScoped
 builder.Services.AddScoped
     <ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
 builder.Services.AddScoped
-    <ICrudService<GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>>();
+    <ICrudService<GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
 builder.Services.AddScoped
-    <ICrudService<GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>>();
+    <ICrudService<GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>, BrgyProjectService>();
 
 
 var app = builder.Build();
