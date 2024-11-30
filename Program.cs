@@ -4,6 +4,7 @@ using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,12 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")?
     .Replace("{PASSWORD}", password);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Identity
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthorization();
 
 // Repositories
 builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
@@ -48,9 +55,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.MapIdentityApi<IdentityUser>();
 
-app.MapControllers();
+app.UseAuthorization();
+
+app.MapControllers().RequireAuthorization();
 
 app.Run();
 

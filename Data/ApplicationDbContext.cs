@@ -1,9 +1,11 @@
 ﻿using BmisApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext() { }
 
@@ -11,6 +13,8 @@ namespace BmisApi.Data
 
         public DbSet<Resident> Residents { get; set; }
         public DbSet<Household> Households { get; set; }
+        public DbSet<Blotter> Blotters { get; set; }
+        public DbSet<BrgyProject> BrgyProjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,17 +51,45 @@ namespace BmisApi.Data
                 .WithOne(r => r.Household)
                 .HasForeignKey(r => r.HouseholdId);
 
-                // Head connection
-                //entity.HasOne(h => h.Head)
-                //.WithOne()
-                //.HasForeignKey<Household>(h => h.HeadId);
-
                 entity.ToTable("households");
 
                 entity.Property(e => e.HouseholdId).IsRequired();  
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.HeadId);
                 entity.Property(e => e.LastUpdatedAt);
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+            });
+
+            modelBuilder.Entity<Blotter>(entity =>
+            {
+                entity.HasKey(e => e.BlotterId).HasName("blotter_pkeys");
+
+                entity.ToTable("blotters");
+
+                entity.Property(e => e.BlotterId).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.ComplainantId).IsRequired();
+                entity.Property(e => e.DefendantId).IsRequired();
+                entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+            });
+
+            modelBuilder.Entity<BrgyProject>(entity =>
+            {
+                entity.HasKey(e => e.ProjectId).HasName("project_pkeys");
+
+                entity.ToTable("projects");
+
+                entity.Property(e => e.ProjectId).IsRequired();
+                entity.Property(e => e.ProjectName).IsRequired();
+                entity.Property(e => e.ImplementingAgency).IsRequired();
+                entity.Property(e => e.StartingDate).IsRequired();
+                entity.Property(e => e.CompletionDate).IsRequired();
+                entity.Property(e => e.ExpectedOutput).IsRequired();
+                entity.Property(e => e.FundingSource).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
             });
         }

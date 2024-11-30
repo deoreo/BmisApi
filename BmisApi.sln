@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BmisApi", "BmisApi.csproj", "{93EE12DE-8517-4A66-A3FD-F53882745A66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmisApi.Test", "..\BmisApi.Test\BmisApi.Test.csproj", "{F7370307-0CB1-429B-8936-07AA31855BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BmisApi.Test", "..\BmisApi.Test\BmisApi.Test.csproj", "{F7370307-0CB1-429B-8936-07AA31855BF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
