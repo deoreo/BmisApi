@@ -20,10 +20,6 @@ namespace BmisApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Setup soft delete
-            modelBuilder.Entity<Resident>().HasQueryFilter(x => x.DeletedAt == null);
-            modelBuilder.Entity<Household>().HasQueryFilter(x => x.DeletedAt == null);
-
             modelBuilder.Entity<Resident>(entity =>
             {
                 entity.HasKey(e => e.ResidentId).HasName("resident_pkeys");
@@ -32,7 +28,7 @@ namespace BmisApi.Data
 
                 entity.Property(e => e.ResidentId).IsRequired();
                 entity.Property(e => e.FullName).IsRequired();
-                entity.Property(e => e.Sex).IsRequired().HasConversion<int>();
+                entity.Property(e => e.Sex).IsRequired().HasConversion<string>();
                 entity.Property(e => e.Birthday).IsRequired();
                 entity.Property(e => e.Occupation);
                 entity.Property(e => e.RegisteredVoter).IsRequired();
@@ -40,6 +36,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.LastUpdatedAt);
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
             });
 
             modelBuilder.Entity<Household>(entity =>
@@ -58,11 +56,21 @@ namespace BmisApi.Data
                 entity.Property(e => e.HeadId);
                 entity.Property(e => e.LastUpdatedAt);
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
             });
 
             modelBuilder.Entity<Blotter>(entity =>
             {
                 entity.HasKey(e => e.BlotterId).HasName("blotter_pkeys");
+
+                entity.HasOne(b => b.Complainant)
+                      .WithMany()
+                      .HasForeignKey(b => b.ComplainantId);
+
+                entity.HasOne(b => b.Defendant)
+                      .WithMany()
+                      .HasForeignKey(b => b.DefendantId);
 
                 entity.ToTable("blotters");
 
@@ -74,6 +82,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
             });
 
             modelBuilder.Entity<BrgyProject>(entity =>
@@ -82,8 +92,8 @@ namespace BmisApi.Data
 
                 entity.ToTable("projects");
 
-                entity.Property(e => e.ProjectId).IsRequired();
-                entity.Property(e => e.ProjectName).IsRequired();
+                entity.Property(e => e.BrgyProjectId).IsRequired();
+                entity.Property(e => e.BrgyProjectName).IsRequired();
                 entity.Property(e => e.ImplementingAgency).IsRequired();
                 entity.Property(e => e.StartingDate).IsRequired();
                 entity.Property(e => e.CompletionDate).IsRequired();
@@ -91,6 +101,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.FundingSource).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
             });
         }
     }

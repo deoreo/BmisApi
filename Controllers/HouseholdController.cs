@@ -1,10 +1,6 @@
-﻿using BmisApi.Models;
-using BmisApi.Models.DTOs.Household;
-using BmisApi.Models.DTOs.Resident;
-using BmisApi.Repositories;
+﻿using BmisApi.Models.DTOs.Household;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Controllers
 {

@@ -2,10 +2,10 @@
 {
     public class BrgyProject
     {
-        public int ProjectId { get; set; }
+        public int BrgyProjectId { get; set; }
 
         // Details
-        public string ProjectName { get; set; } = string.Empty;
+        public string BrgyProjectName { get; set; } = string.Empty;
         public string ImplementingAgency { get; set; } = string.Empty ;
         public DateOnly StartingDate { get; set; }
         public DateTime CompletionDate { get; set;}

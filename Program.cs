@@ -1,5 +1,7 @@
 using BmisApi.Data;
 using BmisApi.Models;
+using BmisApi.Models.DTOs.Blotter;
+using BmisApi.Models.DTOs.BrgyProject;
 using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
@@ -36,12 +38,18 @@ builder.Services.AddAuthorization();
 // Repositories
 builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
 builder.Services.AddScoped<ICrudRepository<Household>, HouseholdRepository>();
+builder.Services.AddScoped<ICrudRepository<Blotter>, BlotterRepository>();
+builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>();
 
 // Services
 builder.Services.AddScoped
     <ICrudService<GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
-builder.Services.AddScoped<
-    ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
+builder.Services.AddScoped
+    <ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
+builder.Services.AddScoped
+    <ICrudService<GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>>();
+builder.Services.AddScoped
+    <ICrudService<GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>>();
 
 
 var app = builder.Build();
