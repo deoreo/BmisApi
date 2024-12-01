@@ -1,5 +1,7 @@
 ﻿using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -10,10 +12,12 @@ namespace BmisApi.Controllers
     {
         private readonly ICrudService
             <GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
+        private readonly UserManager<IdentityUser> _userManager;
         public ResidentController(ICrudService
-            <GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service)
+            <GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service, UserManager<IdentityUser> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -94,5 +98,26 @@ namespace BmisApi.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        [Route("ResetPass")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPass(string userEmail, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result.Errors);
+        }
     }
 }

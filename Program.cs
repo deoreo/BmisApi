@@ -29,6 +29,30 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")?
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// Cors
+var FrontendApp = "_allowFrontendOrigin";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: FrontendApp,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        });
+});
+
+// Cookies 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+});
+    
+
 // Identity
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -65,6 +89,9 @@ app.UseHttpsRedirection();
 
 app.MapIdentityApi<IdentityUser>();
 
+app.UseCors(FrontendApp);
+
+app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
