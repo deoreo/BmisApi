@@ -17,7 +17,7 @@ namespace BmisApi.Repositories
         {
             return await _context.Residents
                 .Include(r => r.Household)
-                .FirstOrDefaultAsync(r => r.ResidentId == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<Resident> CreateAsync(Resident entity)
@@ -62,10 +62,10 @@ namespace BmisApi.Repositories
             
             var residents = await _context.Residents
                 .Include(r => r.Household)
-                .Where(r => ids.Contains(r.ResidentId))
+                .Where(r => ids.Contains(r.Id))
                 .ToListAsync();
 
-            var notFoundIds = validIds.Except(residents.Select(r  => r.ResidentId));
+            var notFoundIds = validIds.Except(residents.Select(r  => r.Id));
             if (notFoundIds.Any())
             {
                 Console.WriteLine($"The following IDs were not found: {string.Join(", ", notFoundIds)}");

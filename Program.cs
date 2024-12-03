@@ -8,26 +8,38 @@ using BmisApi.Repositories;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Connection string
+// Db connection
 var configuration = builder.Configuration;
 var username = configuration["db_username"];
 var password = configuration["db_password"];
 
-// Db Context
 var connectionString = configuration.GetConnectionString("DefaultConnection")?
     .Replace("{USERNAME}", username)
     .Replace("{PASSWORD}", password);
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.MapEnum<Sex>();
+var dataSource = dataSourceBuilder.Build();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(dataSource));
+
+
 
 // Cors
 var FrontendApp = "_allowFrontendOrigin";

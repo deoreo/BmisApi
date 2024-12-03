@@ -20,13 +20,15 @@ namespace BmisApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasPostgresEnum<Sex>();
+
             modelBuilder.Entity<Resident>(entity =>
             {
-                entity.HasKey(e => e.ResidentId).HasName("resident_pkeys");
+                entity.HasKey(e => e.Id).HasName("resident_pkeys");
 
                 entity.ToTable("residents");
 
-                entity.Property(e => e.ResidentId).IsRequired();
+                entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.FullName).IsRequired();
                 entity.Property(e => e.Sex).IsRequired().HasConversion<string>();
                 entity.Property(e => e.Birthday).IsRequired();
@@ -42,7 +44,7 @@ namespace BmisApi.Data
 
             modelBuilder.Entity<Household>(entity =>
             {
-                entity.HasKey(e => e.HouseholdId).HasName("household_pkeys");
+                entity.HasKey(e => e.Id).HasName("household_pkeys");
 
                 // Members connection
                 entity.HasMany(h => h.Members)
@@ -51,7 +53,7 @@ namespace BmisApi.Data
 
                 entity.ToTable("households");
 
-                entity.Property(e => e.HouseholdId).IsRequired();  
+                entity.Property(e => e.Id).IsRequired();  
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.HeadId);
                 entity.Property(e => e.LastUpdatedAt);

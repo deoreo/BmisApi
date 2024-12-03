@@ -2,7 +2,7 @@
 {
     public class Resident
     {
-        public int ResidentId { get; set; }
+        public int Id { get; set; }
 
         // Details
         public string FullName { get; set; } = string.Empty;

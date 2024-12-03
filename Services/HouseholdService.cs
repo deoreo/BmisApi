@@ -37,7 +37,7 @@ namespace BmisApi.Services
                 throw new Exception($"Provided head resident with id {request.headId} not found");
             }
 
-            if (!members.Any(m => m.ResidentId == head.ResidentId))
+            if (!members.Any(m => m.Id == head.Id))
             {
                 members.Add(head);
             }
@@ -58,9 +58,9 @@ namespace BmisApi.Services
 
             foreach (var member in household.Members)
             {
-                member.HouseholdId = household.HouseholdId;
+                member.HouseholdId = household.Id;
 
-                if (member.ResidentId != household.HeadId)
+                if (member.Id != household.HeadId)
                 {
                     member.IsHouseholdHead = false;
                 }
@@ -91,9 +91,9 @@ namespace BmisApi.Services
                     throw new Exception($"Provided head resident with id {request.newHeadId} not found");
                 }
 
-                household.HeadId = newHead.ResidentId;
+                household.HeadId = newHead.Id;
 
-                if (!household.Members.Any(m => m.ResidentId == newHead.ResidentId))
+                if (!household.Members.Any(m => m.Id == newHead.Id))
                 {
                     household.Members.Add(newHead);
                 }
@@ -104,7 +104,7 @@ namespace BmisApi.Services
                 var membersToAdd = await _residentRepository.GetManyByIdAsync(request.membersToAdd);
                 foreach (var member in membersToAdd)
                 {
-                    if (!household.Members.Any(m => m.ResidentId == member.ResidentId))
+                    if (!household.Members.Any(m => m.Id == member.Id))
                     {
                         household.Members.Add(member);
                     }
@@ -146,7 +146,7 @@ namespace BmisApi.Services
 
             var response = new GetHouseholdResponse
                 (
-                household.HouseholdId,
+                household.Id,
                 household.Address,
                 household.Members.Count,
                 head.FullName,

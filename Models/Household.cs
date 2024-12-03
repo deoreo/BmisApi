@@ -2,7 +2,7 @@
 {
     public class Household
     {
-        public int HouseholdId { get; set; }
+        public int Id { get; set; }
         public required string Address { get; set; }
         public int HeadId { get; set; }
         public required ICollection<Resident> Members { get; set; }
@@ -14,7 +14,7 @@
 
         public Resident GetHead()
         {
-            var head =  Members.FirstOrDefault(r => r.ResidentId == HeadId);
+            var head =  Members.FirstOrDefault(r => r.Id == HeadId);
 
             if (head == null)
             {

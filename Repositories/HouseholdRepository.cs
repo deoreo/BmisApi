@@ -17,7 +17,7 @@ namespace BmisApi.Repositories
         {
             return await _context.Households
                 .Include(h => h.Members)
-                .FirstOrDefaultAsync(h => h.HouseholdId == id);
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
 
         public async Task<Household> CreateAsync(Household entity)
