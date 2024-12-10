@@ -1,32 +1,73 @@
-﻿using BmisApi.Models;
+﻿using BmisApi.Data;
+using BmisApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Repositories
 {
     public class BrgyProjectRepository : ICrudRepository<BrgyProject>
     {
-        public Task<BrgyProject> CreateAsync(BrgyProject entity)
+        private readonly ApplicationDbContext _context;
+
+        public BrgyProjectRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<BrgyProject?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.BrgyProjects.FindAsync(id);
+        }
+        public async Task<BrgyProject> CreateAsync(BrgyProject entity)
+        {
+            await _context.BrgyProjects.AddAsync(entity);
+            entity.CreatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<List<BrgyProject>> GetAllAsync()
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var brgyProject = await GetByIdAsync(id);
+
+            if (brgyProject is not null)
+            {
+                brgyProject.DeletedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<BrgyProject?> GetByIdAsync(int id)
+        public async Task UpdateAsync(BrgyProject entity)
         {
-            throw new NotImplementedException();
+            _context.BrgyProjects.Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<List<BrgyProject>> GetManyByIdAsync(IEnumerable<int> ids)
+        public async Task<List<BrgyProject>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.BrgyProjects.ToListAsync();
+        }
+
+        public async Task<List<BrgyProject>> GetManyByIdAsync(IEnumerable<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return new List<BrgyProject>();
+            }
+
+            var validIds = ids.Where(id => id > 0).ToList();
+
+            var brgyProjects = await _context.BrgyProjects
+                .Where(r => ids.Contains(r.Id))
+                .ToListAsync();
+
+            var notFoundIds = validIds.Except(brgyProjects.Select(r => r.Id));
+            if (notFoundIds.Any())
+            {
+                Console.WriteLine($"The following IDs were not found: {string.Join(", ", notFoundIds)}");
+            }
+
+            return brgyProjects;
         }
 
         public IQueryable<BrgyProject> Search(string name)
@@ -34,9 +75,6 @@ namespace BmisApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(BrgyProject entity)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

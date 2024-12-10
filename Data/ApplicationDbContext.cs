@@ -64,7 +64,7 @@ namespace BmisApi.Data
 
             modelBuilder.Entity<Blotter>(entity =>
             {
-                entity.HasKey(e => e.BlotterId).HasName("blotter_pkeys");
+                entity.HasKey(e => e.Id).HasName("blotter_pkeys");
 
                 entity.HasOne(b => b.Complainant)
                       .WithMany()
@@ -76,7 +76,7 @@ namespace BmisApi.Data
 
                 entity.ToTable("blotters");
 
-                entity.Property(e => e.BlotterId).IsRequired();
+                entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
@@ -90,11 +90,11 @@ namespace BmisApi.Data
 
             modelBuilder.Entity<BrgyProject>(entity =>
             {
-                entity.HasKey(e => e.BrgyProjectId).HasName("project_pkeys");
+                entity.HasKey(e => e.Id).HasName("project_pkeys");
 
                 entity.ToTable("projects");
 
-                entity.Property(e => e.BrgyProjectId).IsRequired();
+                entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.BrgyProjectName).IsRequired();
                 entity.Property(e => e.ImplementingAgency).IsRequired();
                 entity.Property(e => e.StartingDate).IsRequired();

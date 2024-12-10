@@ -2,7 +2,7 @@
 {
     public class Blotter
     {
-        public int BlotterId { get; set; }
+        public int Id { get; set; }
 
         // Details
         public DateOnly Date {  get; set; }

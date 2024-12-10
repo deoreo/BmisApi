@@ -22,8 +22,6 @@ namespace BmisApi.Repositories
 
         public async Task<Household> CreateAsync(Household entity)
         {
-            
-
             await _context.Households.AddAsync(entity);
             entity.CreatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();

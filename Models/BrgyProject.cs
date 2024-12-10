@@ -2,7 +2,7 @@
 {
     public class BrgyProject
     {
-        public int BrgyProjectId { get; set; }
+        public int Id { get; set; }
 
         // Details
         public string BrgyProjectName { get; set; } = string.Empty;
