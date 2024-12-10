@@ -80,7 +80,8 @@ namespace BmisApi.Repositories
 
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(e => e.FullName.Contains(name));
+                query = query
+                    .Where(e => EF.Functions.ILike(e.FullName, $"%{name}%"));
             }
 
             return query.AsNoTracking();

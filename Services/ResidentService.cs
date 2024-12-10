@@ -72,7 +72,7 @@ namespace BmisApi.Services
             
             var residentResponse = residents.Select(SetResidentResponse).ToList();
 
-            return new GetAllResidentResponse(residentResponse.ToArray());
+            return new GetAllResidentResponse(residentResponse);
         }
 
         public async Task<GetAllResidentResponse> Search(string name)
@@ -85,7 +85,7 @@ namespace BmisApi.Services
                 residentResponse.Add(SetResidentResponse(resident));
             }
 
-            return new GetAllResidentResponse(residentResponse.ToArray());
+            return new GetAllResidentResponse(residentResponse);
         }
 
         public GetResidentResponse SetResidentResponse(Resident resident)

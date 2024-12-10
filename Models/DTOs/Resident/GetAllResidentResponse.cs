@@ -1,6 +1,6 @@
 ﻿namespace BmisApi.Models.DTOs.Resident
 {
-    public record GetAllResidentResponse (GetResidentResponse[] residents)
+    public record GetAllResidentResponse (List<GetResidentResponse> residents)
     {
     }
 }
