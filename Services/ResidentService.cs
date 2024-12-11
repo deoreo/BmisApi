@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Services
 {
-    public class ResidentService : ICrudService<GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>
+    public class ResidentService : ICrudService<Resident, GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>
     {
         private readonly ICrudRepository<Resident> _repository;
 
@@ -22,7 +22,7 @@ namespace BmisApi.Services
                 return null;
             }
 
-            return SetResidentResponse(resident);
+            return SetResponse(resident);
         }
 
         public async Task<GetResidentResponse> CreateAsync(CreateResidentRequest request)
@@ -38,7 +38,7 @@ namespace BmisApi.Services
 
             resident = await _repository.CreateAsync(resident);
 
-            return SetResidentResponse(resident);
+            return SetResponse(resident);
         }
 
         public async Task DeleteAsync(int id)
@@ -63,14 +63,14 @@ namespace BmisApi.Services
 
             await _repository.UpdateAsync(resident);
 
-            return SetResidentResponse(resident);
+            return SetResponse(resident);
         }
 
         public async Task<GetAllResidentResponse> GetAllAsync()
         {
             var residents = await _repository.GetAllAsync();
             
-            var residentResponse = residents.Select(SetResidentResponse).ToList();
+            var residentResponse = residents.Select(SetResponse).ToList();
 
             return new GetAllResidentResponse(residentResponse);
         }
@@ -82,13 +82,13 @@ namespace BmisApi.Services
 
             foreach (var resident in result)
             {
-                residentResponse.Add(SetResidentResponse(resident));
+                residentResponse.Add(SetResponse(resident));
             }
 
             return new GetAllResidentResponse(residentResponse);
         }
 
-        public GetResidentResponse SetResidentResponse(Resident resident)
+        public GetResidentResponse SetResponse(Resident resident)
         {
             var response = new GetResidentResponse
                 (

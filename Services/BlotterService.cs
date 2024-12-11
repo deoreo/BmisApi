@@ -1,9 +1,18 @@
-﻿using BmisApi.Models.DTOs.Blotter;
+﻿using BmisApi.Models;
+using BmisApi.Models.DTOs.Blotter;
+using BmisApi.Repositories;
 
 namespace BmisApi.Services
 {
-    public class BlotterService : ICrudService<GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>
+    public class BlotterService : ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>
     {
+        private readonly ICrudRepository<Blotter> _repository;
+
+        public BlotterService(ICrudRepository<Blotter> repository)
+        {
+            _repository = repository;
+        }
+
         public Task<GetBlotterResponse> CreateAsync(CreateBlotterRequest request)
         {
             throw new NotImplementedException();
@@ -25,6 +34,11 @@ namespace BmisApi.Services
         }
 
         public Task<GetAllBlotterResponse> Search(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public GetBlotterResponse SetResponse(Blotter entity)
         {
             throw new NotImplementedException();
         }

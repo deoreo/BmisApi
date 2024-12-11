@@ -1,4 +1,5 @@
-﻿using BmisApi.Models.DTOs.Resident;
+﻿using BmisApi.Models;
+using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,10 +12,10 @@ namespace BmisApi.Controllers
     public class ResidentController : ControllerBase
     {
         private readonly ICrudService
-            <GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
+            <Resident,GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
         private readonly UserManager<IdentityUser> _userManager;
         public ResidentController(ICrudService
-            <GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service, UserManager<IdentityUser> userManager)
+            <Resident,GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service, UserManager<IdentityUser> userManager)
         {
             _service = service;
             _userManager = userManager;

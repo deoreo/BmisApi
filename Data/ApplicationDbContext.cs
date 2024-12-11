@@ -95,7 +95,7 @@ namespace BmisApi.Data
                 entity.ToTable("projects");
 
                 entity.Property(e => e.Id).IsRequired();
-                entity.Property(e => e.BrgyProjectName).IsRequired();
+                entity.Property(e => e.ReferenceCode).IsRequired();
                 entity.Property(e => e.ImplementingAgency).IsRequired();
                 entity.Property(e => e.StartingDate).IsRequired();
                 entity.Property(e => e.CompletionDate).IsRequired();

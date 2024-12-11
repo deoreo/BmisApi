@@ -6,7 +6,7 @@ using BmisApi.Repositories;
 
 namespace BmisApi.Services
 {
-    public class HouseholdService : ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>
+    public class HouseholdService : ICrudService<Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>
     {
         private readonly ICrudRepository<Household> _householdRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
@@ -24,17 +24,17 @@ namespace BmisApi.Services
                 return null;
             }
 
-            return SetHouseholdResponse(household);
+            return SetResponse(household);
         }
         public async Task<GetHouseholdResponse> CreateAsync(CreateHouseholdRequest request)
         {
-            var members = await _residentRepository.GetManyByIdAsync(request.membersId);
+            var members = await _residentRepository.GetManyByIdAsync(request.MembersId);
 
-            var head = await _residentRepository.GetByIdAsync(request.headId);
+            var head = await _residentRepository.GetByIdAsync(request.HeadId);
 
             if (head == null)
             {
-                throw new Exception($"Provided head resident with id {request.headId} not found");
+                throw new Exception($"Provided head resident with id {request.HeadId} not found");
             }
 
             if (!members.Any(m => m.Id == head.Id))
@@ -49,8 +49,8 @@ namespace BmisApi.Services
 
             var household = new Household()
             {
-                Address = request.address,
-                HeadId = request.headId,
+                Address = request.Address,
+                HeadId = request.HeadId,
                 Members = members
             };
 
@@ -67,7 +67,7 @@ namespace BmisApi.Services
             }
 
             var response = await _householdRepository.CreateAsync(household);
-            return SetHouseholdResponse(response);
+            return SetResponse(response);
         }
 
         public async Task DeleteAsync(int id)
@@ -83,12 +83,12 @@ namespace BmisApi.Services
                 return null;
             }
 
-            if (request.newHeadId.HasValue)
+            if (request.NewHeadId.HasValue)
             {
-                var newHead = await _residentRepository.GetByIdAsync(request.newHeadId.Value);
+                var newHead = await _residentRepository.GetByIdAsync(request.NewHeadId.Value);
                 if (newHead == null)
                 {
-                    throw new Exception($"Provided head resident with id {request.newHeadId} not found");
+                    throw new Exception($"Provided head resident with id {request.NewHeadId} not found");
                 }
 
                 household.HeadId = newHead.Id;
@@ -99,9 +99,9 @@ namespace BmisApi.Services
                 }
             }
 
-            if (request.membersToAdd?.Any() == true)
+            if (request.MembersToAdd?.Any() == true)
             {
-                var membersToAdd = await _residentRepository.GetManyByIdAsync(request.membersToAdd);
+                var membersToAdd = await _residentRepository.GetManyByIdAsync(request.MembersToAdd);
                 foreach (var member in membersToAdd)
                 {
                     if (!household.Members.Any(m => m.Id == member.Id))
@@ -111,9 +111,9 @@ namespace BmisApi.Services
                 }
             }
 
-            if (request.membersToRemove?.Any() == true)
+            if (request.MembersToRemove?.Any() == true)
             {
-                var membersToRemove = await _residentRepository.GetManyByIdAsync(request.membersToRemove);
+                var membersToRemove = await _residentRepository.GetManyByIdAsync(request.MembersToRemove);
                 foreach (var member in membersToRemove)
                 {
                     household.Members.Remove(member);
@@ -123,14 +123,14 @@ namespace BmisApi.Services
             household.LastUpdatedAt = DateTime.UtcNow;
             await _householdRepository.UpdateAsync(household);
 
-            return SetHouseholdResponse(household);
+            return SetResponse(household);
         }
 
         public async Task<GetAllHouseholdResponse> GetAllAsync()
         {
             var households = await _householdRepository.GetAllAsync();
 
-            var householdResponse = households.Select(SetHouseholdResponse).ToList();
+            var householdResponse = households.Select(SetResponse).ToList();
 
             return new GetAllHouseholdResponse(householdResponse);
         }
@@ -140,7 +140,7 @@ namespace BmisApi.Services
             throw new NotImplementedException();
         }
 
-        public GetHouseholdResponse SetHouseholdResponse(Household household)
+        public GetHouseholdResponse SetResponse(Household household)
         {
             var head = household.GetHead();
 

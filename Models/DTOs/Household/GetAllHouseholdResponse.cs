@@ -1,6 +1,6 @@
 ﻿namespace BmisApi.Models.DTOs.Household
 {
-    public record GetAllHouseholdResponse (List<GetHouseholdResponse> households)
+    public record GetAllHouseholdResponse (List<GetHouseholdResponse> Households)
     {
     }
 }

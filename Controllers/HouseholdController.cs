@@ -1,4 +1,5 @@
-﻿using BmisApi.Models.DTOs.Household;
+﻿using BmisApi.Models;
+using BmisApi.Models.DTOs.Household;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace BmisApi.Controllers
     public class HouseholdController : ControllerBase
     {
         private readonly ICrudService
-            <GetHouseholdResponse,GetAllHouseholdResponse,CreateHouseholdRequest,UpdateHouseholdRequest> _service;
+            <Household, GetHouseholdResponse,GetAllHouseholdResponse,CreateHouseholdRequest,UpdateHouseholdRequest> _service;
         public HouseholdController(ICrudService
-            <GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest> service)
+            <Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest> service)
         {
             _service = service;
         }

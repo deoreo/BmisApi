@@ -79,13 +79,13 @@ builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>(
 
 // Services
 builder.Services.AddScoped
-    <ICrudService<GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
+    <ICrudService<Resident, GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
 builder.Services.AddScoped
-    <ICrudService<GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
+    <ICrudService<Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
 builder.Services.AddScoped
-    <ICrudService<GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
+    <ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
 builder.Services.AddScoped
-    <ICrudService<GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>, BrgyProjectService>();
+    <ICrudService<BrgyProject, GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>, BrgyProjectService>();
 
 
 var app = builder.Build();
@@ -106,7 +106,8 @@ app.UseCors(FrontendApp);
 app.UseAuthorization();
 app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization();
+app.MapControllers()
+    .RequireAuthorization();
 
 app.Run();
 

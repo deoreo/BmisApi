@@ -1,6 +1,6 @@
 ﻿namespace BmisApi.Models.DTOs.BrgyProject
 {
-    public class GetAllBrgyProjectResponse
+    public record class GetAllBrgyProjectResponse (List<GetBrgyProjectResponse> projects)
     {
     }
 }

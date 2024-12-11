@@ -1,7 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Household
 {
-    public record GetHouseholdResponse (int Id, string address, int memberCount, string headName,
-        int age, Sex sex, DateOnly birthday, string? occupation, DateTime createdAt)
+    public record GetHouseholdResponse (int Id, string Address, int MemberCount, string HeadName,
+        int Age, Sex Sex, DateOnly Birthday, string? Occupation, DateTime CreatedAt)
     {
     }
 }

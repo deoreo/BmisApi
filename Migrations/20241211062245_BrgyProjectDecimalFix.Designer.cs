@@ -3,6 +3,7 @@ using System;
 using BmisApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BmisApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241211062245_BrgyProjectDecimalFix")]
+    partial class BrgyProjectDecimalFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,6 +78,10 @@ namespace BmisApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BrgyProjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("CO")
                         .HasColumnType("numeric");
 
@@ -107,10 +114,6 @@ namespace BmisApi.Migrations
 
                     b.Property<decimal>("PS")
                         .HasColumnType("numeric");
-
-                    b.Property<string>("ReferenceCode")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateOnly>("StartingDate")
                         .HasColumnType("date");
