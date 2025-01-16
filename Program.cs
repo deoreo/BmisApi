@@ -1,4 +1,5 @@
 using BmisApi.Data;
+using BmisApi.Identity;
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.BrgyProject;
@@ -7,6 +8,7 @@ using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Text.Json.Serialization;
@@ -67,9 +69,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Identity
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole",
+        policy => policy.RequireRole("Admin"));
+});
 
 // Repositories
 builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
@@ -89,6 +96,19 @@ builder.Services.AddScoped
 
 
 var app = builder.Build();
+
+// Seed admin user
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        await AdminSeeder.SeedAdmin(scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during seeding: {ex.Message}");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -113,3 +133,4 @@ app.Run();
 
 // For tests
 public partial class Program { }
+

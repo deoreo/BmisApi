@@ -60,6 +60,7 @@ namespace BmisApi.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy ="RequireAdminRole")]
         [HttpPut]
         [Route("edit/{id}")]
         public async Task<ActionResult<GetResidentResponse>> UpdateResidentAsync(int id, UpdateResidentRequest request)
