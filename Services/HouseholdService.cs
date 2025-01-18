@@ -90,6 +90,12 @@ namespace BmisApi.Services
                 {
                     throw new Exception($"Provided head resident with id {request.NewHeadId} not found");
                 }
+                
+                var head = household.GetHead();
+                if (head != null)
+                {
+                    household.Members.Remove(head);
+                }
 
                 household.HeadId = newHead.Id;
 
