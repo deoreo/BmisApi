@@ -14,12 +14,19 @@
 
         public Resident GetHead()
         {
-            var head =  Members.FirstOrDefault(r => r.Id == HeadId);
+            var head =  Members.FirstOrDefault(r => r.Id == HeadId) ?? new Resident // Return a dummy resident if head is null
+            (
+                "N/A",
+                0,
+                DateOnly.MinValue,
+                "Unemployed",
+                false
+            );
 
-            if (head == null)
-            {
-                throw new Exception($"Head not found in the household. HeadId: {HeadId}");
-            }
+            //if (head == null)
+            //{
+            //    throw new Exception($"Head not found in the household. HeadId: {HeadId}");
+            //}
 
             return head;
         }
