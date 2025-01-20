@@ -23,11 +23,6 @@
                 false
             );
 
-            //if (head == null)
-            //{
-            //    throw new Exception($"Head not found in the household. HeadId: {HeadId}");
-            //}
-
             return head;
         }
     }

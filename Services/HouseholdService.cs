@@ -16,6 +16,7 @@ namespace BmisApi.Services
             _householdRepository = householdRepository;
             _residentRepository = residentRepository;
         }
+
         public async Task<GetHouseholdResponse?> GetByIdAsync(int id)
         {
             var household = await _householdRepository.GetByIdAsync(id);
@@ -26,6 +27,7 @@ namespace BmisApi.Services
 
             return SetResponse(household);
         }
+
         public async Task<GetHouseholdResponse> CreateAsync(CreateHouseholdRequest request)
         {
             var members = await _residentRepository.GetManyByIdAsync(request.MembersId);

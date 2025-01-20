@@ -1,6 +1,6 @@
 ﻿namespace BmisApi.Models.DTOs.Blotter
 {
-    public class GetAllBlotterResponse
+    public record GetAllBlotterResponse (List<GetBlotterResponse> Blotters)
     {
     }
 }

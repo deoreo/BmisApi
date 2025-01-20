@@ -6,31 +6,102 @@ namespace BmisApi.Services
 {
     public class BlotterService : ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>
     {
-        private readonly ICrudRepository<Blotter> _repository;
+        private readonly ICrudRepository<Blotter> _blotterRepository;
+        private readonly ICrudRepository<Resident> _residentRepository;
 
-        public BlotterService(ICrudRepository<Blotter> repository)
+        public BlotterService(ICrudRepository<Blotter> blotterRepository, ICrudRepository<Resident> residentRepository)
         {
-            _repository = repository;
+            _blotterRepository = blotterRepository;
+            _residentRepository = residentRepository;
         }
 
-        public Task<GetBlotterResponse> CreateAsync(CreateBlotterRequest request)
+        public async Task<GetBlotterResponse?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var blotter = await _blotterRepository.GetByIdAsync(id);
+            if (blotter == null)
+            {
+                return null;
+            }
+
+            return SetResponse(blotter);
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<GetBlotterResponse> CreateAsync(CreateBlotterRequest request)
         {
-            throw new NotImplementedException();
+            var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
+            if (complainant == null)
+            {
+                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+            }
+
+            var defendant = await _residentRepository.GetByIdAsync(request.DefendantId);
+            if (defendant == null)
+            {
+                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+            }
+
+            var blotter = new Blotter
+            {
+                Date = request.Date,
+                ComplainantId = request.ComplainantId,
+                Complainant = complainant,
+                DefendantId = request.DefendantId,
+                Defendant = defendant,
+                Nature = request.Nature,
+                Status = request.Status,
+            };
+
+            blotter = await _blotterRepository.CreateAsync(blotter);
+
+            return SetResponse(blotter);
         }
 
-        public Task<GetAllBlotterResponse> GetAllAsync()
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            await _blotterRepository.DeleteAsync(id);
         }
 
-        public Task<GetBlotterResponse?> GetByIdAsync(int id)
+        public async Task<GetBlotterResponse?> UpdateAsync(UpdateBlotterRequest request, int id)
         {
-            throw new NotImplementedException();
+            var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
+            if (newComplainant == null)
+            {
+                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+            }
+
+            var newDefendant = await _residentRepository.GetByIdAsync(request.DefendantId);
+            if (newDefendant == null)
+            {
+                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+            }
+
+            var blotter = await _blotterRepository.GetByIdAsync(id);
+            if (blotter == null)
+            {
+                return null;
+            }
+
+            blotter.Date = request.Date;
+            blotter.ComplainantId = request.ComplainantId;
+            blotter.Complainant = newComplainant;
+            blotter.DefendantId = request.DefendantId;
+            blotter.Defendant = newDefendant;
+            blotter.Nature = request.Nature;
+            blotter.Status = request.Status;
+            blotter.LastUpdatedAt = DateTime.UtcNow;
+
+            await _blotterRepository.UpdateAsync(blotter);
+
+            return SetResponse(blotter);
+        }
+
+        public async Task<GetAllBlotterResponse> GetAllAsync()
+        {
+            var blotters = await _blotterRepository.GetAllAsync();
+
+            var responses = blotters.Select(SetResponse).ToList();
+
+            return new GetAllBlotterResponse(responses);
         }
 
         public Task<GetAllBlotterResponse> Search(string name)
@@ -38,14 +109,21 @@ namespace BmisApi.Services
             throw new NotImplementedException();
         }
 
-        public GetBlotterResponse SetResponse(Blotter entity)
+        public GetBlotterResponse SetResponse(Blotter blotter)
         {
-            throw new NotImplementedException();
+            var response = new GetBlotterResponse
+                (
+                blotter.Date,
+                blotter.Complainant.FullName,
+                blotter.Defendant.FullName,
+                blotter.Nature,
+                blotter.Status,
+                blotter.CreatedAt
+                );
+
+            return response;
         }
 
-        public Task<GetBlotterResponse?> UpdateAsync(UpdateBlotterRequest request, int id)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

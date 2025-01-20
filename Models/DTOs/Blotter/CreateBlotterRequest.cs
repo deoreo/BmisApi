@@ -1,6 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Blotter
 {
-    public class CreateBlotterRequest
+    public record CreateBlotterRequest
+        (DateOnly Date, int ComplainantId, int DefendantId, string Nature, string Status)
     {
     }
 }

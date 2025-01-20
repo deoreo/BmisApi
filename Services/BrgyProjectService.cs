@@ -66,6 +66,7 @@ namespace BmisApi.Services
             brgyProject.PS = request.PS ?? 0m;
             brgyProject.MOE = request.MOE ?? 0m;
             brgyProject.CO = request.CO ?? 0m;
+            brgyProject.LastUpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(brgyProject);
 
