@@ -7,6 +7,7 @@ using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
 using BmisApi.Services.HouseholdService;
+using BmisApi.Services.OfficialService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
 builder.Services.AddScoped<ICrudRepository<Household>, HouseholdRepository>();
 builder.Services.AddScoped<ICrudRepository<Blotter>, BlotterRepository>();
 builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>();
+builder.Services.AddScoped<ICrudRepository<Official>, OfficialRepository>();
 
 // Services
 builder.Services.AddScoped
@@ -90,7 +92,8 @@ builder.Services.AddScoped
     <ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
 builder.Services.AddScoped
     <ICrudService<BrgyProject, GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>, BrgyProjectService>();
-
+builder.Services.AddScoped
+    <IOfficialService, OfficialService>();
 
 var app = builder.Build();
 

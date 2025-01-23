@@ -15,6 +15,7 @@ namespace BmisApi.Data
         public DbSet<Household> Households { get; set; }
         public DbSet<Blotter> Blotters { get; set; }
         public DbSet<BrgyProject> BrgyProjects { get; set; }
+        public DbSet<Official> Officials { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -102,6 +103,28 @@ namespace BmisApi.Data
                 entity.Property(e => e.CompletionDate).IsRequired();
                 entity.Property(e => e.ExpectedOutput).IsRequired();
                 entity.Property(e => e.FundingSource).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<Official>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("official_pkeys");
+
+                entity.HasOne(o => o.Resident)
+                    .WithMany()
+                    .HasForeignKey(o => o.ResidentId);
+
+                entity.ToTable("officials");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Position).IsRequired();
+                entity.Property(e => e.Title);
+                entity.Property(e => e.ResidentId).IsRequired();
+                entity.Property(e => e.TermStart).IsRequired();
+                entity.Property(e => e.TermEnd).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
