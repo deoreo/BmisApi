@@ -35,6 +35,7 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")?
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 dataSourceBuilder.MapEnum<Sex>();
+dataSourceBuilder.MapEnum<Status>();
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -71,11 +72,8 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireAdminRole",
-        policy => policy.RequireRole("Admin"));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 
 // Repositories
 builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();

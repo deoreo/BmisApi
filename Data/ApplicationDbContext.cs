@@ -81,7 +81,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
-                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.Status).IsRequired().HasConversion<string>();
+                entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 

@@ -49,6 +49,7 @@ namespace BmisApi.Services
                 Defendant = defendant,
                 Nature = request.Nature,
                 Status = request.Status,
+                Narrative = request.Narrative
             };
 
             blotter = await _blotterRepository.CreateAsync(blotter);
@@ -88,6 +89,7 @@ namespace BmisApi.Services
             blotter.Defendant = newDefendant;
             blotter.Nature = request.Nature;
             blotter.Status = request.Status;
+            blotter.Narrative = request.Narrative;
             blotter.LastUpdatedAt = DateTime.UtcNow;
 
             await _blotterRepository.UpdateAsync(blotter);
@@ -113,11 +115,13 @@ namespace BmisApi.Services
         {
             var response = new GetBlotterResponse
                 (
+                blotter.Id,
                 blotter.Date,
                 blotter.Complainant.FullName,
                 blotter.Defendant.FullName,
                 blotter.Nature,
                 blotter.Status,
+                blotter.Narrative,
                 blotter.CreatedAt
                 );
 
