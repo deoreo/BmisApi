@@ -1,12 +1,11 @@
 ﻿using BmisApi.Models.DTOs.Resident;
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Household;
-using BmisApi.Data;
 using BmisApi.Repositories;
 
-namespace BmisApi.Services
+namespace BmisApi.Services.HouseholdService
 {
-    public class HouseholdService : ICrudService<Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>
+    public class HouseholdService : IHouseholdService
     {
         private readonly ICrudRepository<Household> _householdRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
@@ -92,7 +91,7 @@ namespace BmisApi.Services
                 {
                     throw new Exception($"Provided head resident with id {request.NewHeadId} not found");
                 }
-                
+
                 var head = household.GetHead();
                 if (head != null)
                 {
@@ -141,6 +140,34 @@ namespace BmisApi.Services
             var householdResponse = households.Select(SetResponse).ToList();
 
             return new GetAllHouseholdResponse(householdResponse);
+        }
+
+        public async Task<GetAllResidentResponse> GetMembersAsync(int id)
+        {
+            var household = await _householdRepository.GetByIdAsync(id);
+
+            if (household == null)
+            {
+                throw new Exception($"Provided household with id {id} not found");
+            }
+
+            var members = household.Members
+                .Select(members => new GetResidentResponse
+                (
+                    members.Id,
+                    members.FullName,
+                    members.GetAge(members.Birthday),
+                    members.Sex.ToString(),
+                    members.Birthday,
+                    members.Occupation,
+                    members.RegisteredVoter,
+                    members.HouseholdId,
+                    members.Household?.Address,
+                    members.CreatedAt
+                ))
+                .ToList();
+
+            return new GetAllResidentResponse(members);
         }
 
         public Task<GetAllHouseholdResponse> Search(string name)

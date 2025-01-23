@@ -21,25 +21,25 @@ namespace BmisApi.Migrations
                 table: "blotters",
                 newName: "Id");
 
-            //migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"PS\" TYPE numeric USING \"PS\"::numeric;");
-            //migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"MOE\" TYPE numeric USING \"MOE\"::numeric;");
-            //migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"CO\" TYPE numeric USING \"CO\"::numeric;");
+            migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"PS\" TYPE numeric USING \"PS\"::numeric;");
+            migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"MOE\" TYPE numeric USING \"MOE\"::numeric;");
+            migrationBuilder.Sql("ALTER TABLE projects ALTER COLUMN \"CO\" TYPE numeric USING \"CO\"::numeric;");
 
-            migrationBuilder.AlterColumn<decimal>(
-                name: "PS",
-                table: "projects",
-                type: "numeric",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "text");
+            //migrationBuilder.AlterColumn<decimal>(
+            //    name: "PS",
+            //    table: "projects",
+            //    type: "numeric",
+            //    nullable: false,
+            //    oldClrType: typeof(string),
+            //    oldType: "text");
 
-            migrationBuilder.AlterColumn<decimal>(
-                name: "MOE",
-                table: "projects",
-                type: "numeric",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "text");
+            //migrationBuilder.AlterColumn<decimal>(
+            //    name: "MOE",
+            //    table: "projects",
+            //    type: "numeric",
+            //    nullable: false,
+            //    oldClrType: typeof(string),
+            //    oldType: "text");
 
             migrationBuilder.AlterColumn<DateOnly>(
                 name: "CompletionDate",
@@ -49,13 +49,13 @@ namespace BmisApi.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp with time zone");
 
-            migrationBuilder.AlterColumn<decimal>(
-                name: "CO",
-                table: "projects",
-                type: "numeric",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "text");
+            //migrationBuilder.AlterColumn<decimal>(
+            //    name: "CO",
+            //    table: "projects",
+            //    type: "numeric",
+            //    nullable: false,
+            //    oldClrType: typeof(string),
+            //    oldType: "text");
 
             migrationBuilder.AddColumn<decimal>(
                 name: "Total",

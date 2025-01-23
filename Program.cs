@@ -3,12 +3,11 @@ using BmisApi.Identity;
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.BrgyProject;
-using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
+using BmisApi.Services.HouseholdService;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Text.Json.Serialization;
@@ -88,7 +87,7 @@ builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>(
 builder.Services.AddScoped
     <ICrudService<Resident, GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
 builder.Services.AddScoped
-    <ICrudService<Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest>, HouseholdService>();
+    <IHouseholdService, HouseholdService>();
 builder.Services.AddScoped
     <ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
 builder.Services.AddScoped

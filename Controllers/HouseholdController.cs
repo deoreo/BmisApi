@@ -1,6 +1,8 @@
 ﻿using BmisApi.Models;
 using BmisApi.Models.DTOs.Household;
+using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
+using BmisApi.Services.HouseholdService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -9,10 +11,8 @@ namespace BmisApi.Controllers
     [ApiController]
     public class HouseholdController : ControllerBase
     {
-        private readonly ICrudService
-            <Household, GetHouseholdResponse,GetAllHouseholdResponse,CreateHouseholdRequest,UpdateHouseholdRequest> _service;
-        public HouseholdController(ICrudService
-            <Household, GetHouseholdResponse, GetAllHouseholdResponse, CreateHouseholdRequest, UpdateHouseholdRequest> service)
+        private readonly IHouseholdService _service;
+        public HouseholdController(IHouseholdService service)
         {
             _service = service;
         }
@@ -77,6 +77,19 @@ namespace BmisApi.Controllers
             if (response == null)
             {
                 return BadRequest("Failed to get households");
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-members")]
+        public async Task<ActionResult<GetAllResidentResponse>> GetMembersAsync(int id)
+        {
+            var response = await _service.GetMembersAsync(id);
+            if (response == null)
+            {
+                return BadRequest("Failed to get members");
             }
 
             return Ok(response);
