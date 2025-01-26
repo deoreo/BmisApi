@@ -16,7 +16,7 @@ namespace BmisApi.Repositories
         {
             return await _context.Officials
                 .Include(o => o.Resident)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<Official> CreateAsync(Official entity)
