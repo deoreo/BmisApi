@@ -16,6 +16,7 @@ namespace BmisApi.Data
         public DbSet<Blotter> Blotters { get; set; }
         public DbSet<BrgyProject> BrgyProjects { get; set; }
         public DbSet<Official> Officials { get; set; }
+        public DbSet<Incident> Incidents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -125,6 +126,27 @@ namespace BmisApi.Data
                 entity.Property(e => e.ResidentId).IsRequired();
                 entity.Property(e => e.TermStart).IsRequired();
                 entity.Property(e => e.TermEnd).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<Incident>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("incident_pkeys");
+
+                entity.HasOne(i => i.Complainant)
+                      .WithMany()
+                      .HasForeignKey(i => i.ComplainantId);
+
+                entity.ToTable("incidents");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.ComplainantId).IsRequired();
+                entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
