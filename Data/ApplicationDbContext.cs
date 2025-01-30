@@ -32,7 +32,10 @@ namespace BmisApi.Data
                 entity.ToTable("residents");
 
                 entity.Property(e => e.Id).IsRequired();
-                entity.Property(e => e.FullName).IsRequired();
+                entity.Property(e => e.FirstName).IsRequired();
+                entity.Property(e => e.MiddleName);
+                entity.Property(e => e.LastName).IsRequired();
+                entity.Property(e => e.Suffix);
                 entity.Property(e => e.Sex).IsRequired().HasConversion<string>();
                 entity.Property(e => e.Birthday).IsRequired();
                 entity.Property(e => e.Occupation);

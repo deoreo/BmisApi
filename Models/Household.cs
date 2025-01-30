@@ -14,14 +14,14 @@
 
         public Resident GetHead()
         {
-            var head =  Members.FirstOrDefault(r => r.Id == HeadId) ?? new Resident // Return a dummy resident if head is null
-            (
-                "N/A",
-                0,
-                DateOnly.MinValue,
-                "Unemployed",
-                false
-            );
+            var head = Members.FirstOrDefault(r => r.Id == HeadId) ?? new Resident // Return a dummy resident if head is null
+            {
+                FirstName = "N/A",
+                LastName = "N/A",
+                Sex = 0,
+                Birthday = DateOnly.MinValue,
+                RegisteredVoter = false
+            };
 
             return head;
         }

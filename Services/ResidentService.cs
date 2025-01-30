@@ -28,13 +28,16 @@ namespace BmisApi.Services
         public async Task<GetResidentResponse> CreateAsync(CreateResidentRequest request)
         {
             var resident = new Resident
-                (
-                    request.FullName,
-                    request.Sex,
-                    request.Birthday,
-                    request.Occupation,
-                    request.RegisteredVoter
-                );
+            {
+                FirstName = request.FirstName,
+                MiddleName = request.MiddleName,
+                LastName = request.LastName,
+                Suffix = request.Suffix,
+                Sex = request.Sex,
+                Birthday = request.Birthday,
+                Occupation = request.Occupation,
+                RegisteredVoter = request.RegisteredVoter
+            };
 
             resident = await _repository.CreateAsync(resident);
 
@@ -54,7 +57,10 @@ namespace BmisApi.Services
                 return null;
             }
 
-            resident.FullName = request.FullName;
+            resident.FirstName = request.FirstName;
+            resident.MiddleName = request.MiddleName;
+            resident.LastName = request.LastName;
+            resident.Suffix = request.Suffix;
             resident.Sex = request.Sex;
             resident.Birthday = request.Birthday;
             resident.Occupation = request.Occupation;
