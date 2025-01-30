@@ -17,6 +17,7 @@ namespace BmisApi.Data
         public DbSet<BrgyProject> BrgyProjects { get; set; }
         public DbSet<Official> Officials { get; set; }
         public DbSet<Incident> Incidents { get; set; }
+        public DbSet<Vawc> Vawcs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -146,6 +147,33 @@ namespace BmisApi.Data
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.Narrative).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<Vawc>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("vawc_pkeys");
+
+                entity.HasOne(b => b.Complainant)
+                      .WithMany()
+                      .HasForeignKey(b => b.ComplainantId);
+
+                entity.HasOne(b => b.Defendant)
+                      .WithMany()
+                      .HasForeignKey(b => b.DefendantId);
+
+                entity.ToTable("vawc");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.ComplainantId).IsRequired();
+                entity.Property(e => e.DefendantId).IsRequired();
+                entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.Status).IsRequired().HasConversion<string>();
                 entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);

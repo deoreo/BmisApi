@@ -9,6 +9,7 @@ using BmisApi.Services;
 using BmisApi.Services.HouseholdService;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.OfficialService;
+using BmisApi.Services.VawcService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -37,7 +38,8 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")?
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 dataSourceBuilder.MapEnum<Sex>();
-dataSourceBuilder.MapEnum<Status>();
+dataSourceBuilder.MapEnum<BlotterStatus>();
+dataSourceBuilder.MapEnum<VawcStatus>();
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -84,6 +86,7 @@ builder.Services.AddScoped<ICrudRepository<Blotter>, BlotterRepository>();
 builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>();
 builder.Services.AddScoped<ICrudRepository<Official>, OfficialRepository>();
 builder.Services.AddScoped<ICrudRepository<Incident>, IncidentRepository>();
+builder.Services.AddScoped<ICrudRepository<Vawc>,  VawcRepository>();
 
 // Services
 builder.Services.AddScoped
@@ -98,6 +101,8 @@ builder.Services.AddScoped
     <IOfficialService, OfficialService>();
 builder.Services.AddScoped
     <IIncidentService, IncidentService>();
+builder.Services.AddScoped
+    <IVawcService, VawcService>();
 
 var app = builder.Build();
 
