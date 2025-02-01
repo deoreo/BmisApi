@@ -1,6 +1,5 @@
 ﻿using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
-using BmisApi.Models.DTOs.Household;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Mvc;
 

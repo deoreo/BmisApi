@@ -8,16 +8,10 @@ namespace BmisApi.Identity
         {
             using var scope = serviceProvider.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             const string adminRole = "Admin";
-            if (!await roleManager.RoleExistsAsync(adminRole))
-            {
-                await roleManager.CreateAsync(new IdentityRole(adminRole));
-            }
-
-            const string adminEmail = "admin@gmail.com";
-            var admin = await userManager.FindByEmailAsync(adminEmail);
+            const string adminUsername = "KapitanColbert";
+            var admin = await userManager.FindByNameAsync(adminUsername);
             if (admin is not null)
             {
                 await userManager.AddToRoleAsync(admin, adminRole);
@@ -26,10 +20,10 @@ namespace BmisApi.Identity
             }
             else
             {
-                admin = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+                admin = new IdentityUser { UserName = adminUsername };
 
                 Console.WriteLine("Enter password for the admin user: ");
-                string adminPassword = Console.ReadLine() ?? "Admin@1";
+                string adminPassword = Console.ReadLine() ?? "Look1st@kapitan";
 
                 var result = await userManager.CreateAsync(admin, adminPassword);
 
@@ -45,8 +39,6 @@ namespace BmisApi.Identity
                     {
                         Console.WriteLine($"- {error.Description}");
                     }
-
-                    return;
                 }
             }
         }

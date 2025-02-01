@@ -45,8 +45,6 @@ var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(dataSource));
 
-
-
 // Cors
 var FrontendApp = "_allowFrontendOrigin";
 
@@ -69,10 +67,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
 });
-    
+
 
 // Identity
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+{
+    options.User.RequireUniqueEmail = false;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -111,6 +112,7 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+        await RoleSeeder.SeedRoles(scope.ServiceProvider);
         await AdminSeeder.SeedAdmin(scope.ServiceProvider);
     }
     catch (Exception ex)

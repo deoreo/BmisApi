@@ -100,26 +100,6 @@ namespace BmisApi.Controllers
             return NotFound();
         }
 
-        [HttpPost]
-        [Route("ResetPass")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ResetPass(string userEmail, string newPassword)
-        {
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            if (user == null)
-            {
-                return BadRequest("User not found.");
-            }
-
-            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
-
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result.Errors);
-        }
+        
     }
 }

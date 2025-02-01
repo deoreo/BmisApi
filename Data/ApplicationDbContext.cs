@@ -1,4 +1,5 @@
-﻿using BmisApi.Models;
+﻿using BmisApi.Identity;
+using BmisApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
