@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using System.Text;
 using System.Text.Json.Serialization;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,15 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Identity
+builder.Services.AddIdentityCore<IdentityUser>(options =>
+{
+    options.User.RequireUniqueEmail = false;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager<SignInManager<IdentityUser>>();
+
 // Cookies 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -79,28 +89,22 @@ var jwtAudience = builder.Configuration["Jwt:Audience"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSecretKey))
+            ValidIssuer = "http://localhost:7173",
+            ValidAudience = "http://localhost:5173",
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSecretKey)),
+            ClockSkew = TimeSpan.Zero
         };
+
+        options.MapInboundClaims = false;
     });
 
 
-// Identity
-builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
-{
-    options.User.RequireUniqueEmail = false;
-})
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
@@ -132,6 +136,12 @@ builder.Services.AddScoped
 
 var app = builder.Build();
 
+//app.MapIdentityApi<IdentityUser>();
+app.UseCors(FrontendApp);
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Seed admin user
 using (var scope = app.Services.CreateScope())
 {
@@ -155,12 +165,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapIdentityApi<IdentityUser>();
 
-app.UseCors(FrontendApp);
 
-app.UseAuthorization();
-app.UseAuthorization();
+
 
 app.MapControllers()
     .RequireAuthorization();

@@ -34,7 +34,7 @@ namespace BmisApi.Identity
                 return BadRequest("User already exixts.");
             }
 
-            var user = new ApplicationUser
+            var user = new IdentityUser
             {
                 UserName = model.Username
             };
@@ -70,7 +70,8 @@ namespace BmisApi.Identity
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id)
             };
 
             foreach (var role in userRoles)
@@ -78,21 +79,19 @@ namespace BmisApi.Identity
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var authSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_config["Jwt:Key"]));
+            var keyBytes = Convert.FromBase64String(_config["Jwt:Key"]);
+            var key = new SymmetricSecurityKey(keyBytes);
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],  // Replace with your issuer
-                audience: _config["Jwt:Audience"],  // Replace with your audience
-                expires: DateTime.Now.AddHours(3),  // Token expiry time
+                issuer: "http://localhost:7173",  // Replace with your issuer
+                audience: "http://localhost:5173",  // Replace with your audience
                 claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                expires: DateTime.UtcNow.AddHours(3),  // Token expiry time
+                signingCredentials: credentials
             );
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
-            });
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
 
         }
 
