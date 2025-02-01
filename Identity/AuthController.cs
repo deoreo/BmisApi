@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BmisApi.Identity
 {
@@ -11,11 +15,13 @@ namespace BmisApi.Identity
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IConfiguration _config;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _config = config;
         }
 
         [HttpPost]
@@ -49,7 +55,6 @@ namespace BmisApi.Identity
         public async Task<ActionResult<string>> Login([FromBody] LoginModel model, bool useCookies)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return Unauthorized("Invalid username or password.");
@@ -61,10 +66,34 @@ namespace BmisApi.Identity
                 return Ok();
             }
 
-            var token = _userManager.GenerateUserTokenAsync(user, "Default", "Authentication");
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
-            return Ok(new { token });
-            
+            foreach (var role in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],  // Replace with your issuer
+                audience: _config["Jwt:Audience"],  // Replace with your audience
+                expires: DateTime.Now.AddHours(3),  // Token expiry time
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
+            });
+
         }
 
         [HttpGet]
