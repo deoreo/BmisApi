@@ -155,6 +155,10 @@ namespace BmisApi.Services.HouseholdService
                 .Select(members => new GetResidentResponse
                 (
                     members.Id,
+                    members.FirstName,
+                    members.MiddleName,
+                    members.LastName,
+                    members.Suffix,
                     members.FullName,
                     members.GetAge(members.Birthday),
                     members.Sex.ToString(),

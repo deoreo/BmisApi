@@ -99,6 +99,10 @@ namespace BmisApi.Services
             var response = new GetResidentResponse
                 (
                 resident.Id,
+                resident.FirstName,
+                resident.MiddleName,
+                resident.LastName,
+                resident.Suffix,
                 resident.FullName,
                 resident.GetAge(resident.Birthday),
                 resident.Sex.ToString(),

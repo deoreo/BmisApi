@@ -21,7 +21,7 @@ namespace BmisApi.Models
         [NotMapped]
         public string FullName => $"{FirstName} " +
             $"{(MiddleName != null ? MiddleName + " " : "")}" +
-            $"{LastName}" +
+            $"{LastName} " +
             $"{(Suffix != null ? " " + Suffix : "")}"
             .Trim();
 
