@@ -95,7 +95,7 @@ namespace BmisApi.Identity
 
         [HttpGet]
         [Route("get-all")]
-        public async Task<ActionResult<List<UserDto>>> GetUsers()
+        public async Task<ActionResult<GetAllUserResponse>> GetUsers()
         {
             var users = await _userManager.Users.ToListAsync();
 
@@ -106,6 +106,7 @@ namespace BmisApi.Identity
                 var role = await _userManager.GetRolesAsync(user);
                 userDtos.Add(new UserDto
                 {
+                    Id = user.Id,
                     Username = user.UserName ?? "N/A",
                     Role = role.FirstOrDefault() ?? "No Role",
                     LockoutEnd = user.LockoutEnd,
@@ -114,7 +115,7 @@ namespace BmisApi.Identity
             }
 
 
-            return Ok(userDtos);
+            return Ok(new GetAllUserResponse(userDtos));
         }
 
         [HttpPost]
