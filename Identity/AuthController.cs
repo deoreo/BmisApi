@@ -14,13 +14,11 @@ namespace BmisApi.Identity
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _config;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config)
+        public AuthController(UserManager<IdentityUser> userManager, IConfiguration config)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _config = config;
         }
 
@@ -52,7 +50,7 @@ namespace BmisApi.Identity
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login([FromBody] LoginModel model, bool useCookies)
+        public async Task<ActionResult<string>> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
@@ -60,11 +58,11 @@ namespace BmisApi.Identity
                 return Unauthorized("Invalid username or password.");
             }
 
-            if (useCookies)
-            {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok();
-            }
+            //if (useCookies)
+            //{
+            //    await _signInManager.SignInAsync(user, isPersistent: false);
+            //    return Ok();
+            //}
 
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
