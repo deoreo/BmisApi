@@ -6,6 +6,7 @@
 
         // Details
         public string ReferenceCode { get; set; } = string.Empty;
+        public string ProjectDescription {  get; set; } = string.Empty ;
         public string ImplementingAgency { get; set; } = string.Empty ;
         public DateOnly StartingDate { get; set; }
         public DateOnly CompletionDate { get; set;}

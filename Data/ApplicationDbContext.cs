@@ -104,6 +104,7 @@ namespace BmisApi.Data
 
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.ReferenceCode).IsRequired();
+                entity.Property(e => e.ProjectDescription).IsRequired();
                 entity.Property(e => e.ImplementingAgency).IsRequired();
                 entity.Property(e => e.StartingDate).IsRequired();
                 entity.Property(e => e.CompletionDate).IsRequired();

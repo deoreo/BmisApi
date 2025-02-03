@@ -82,8 +82,8 @@ namespace BmisApi.Identity
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "http://localhost:7173",  // Replace with your issuer
-                audience: "http://localhost:5173",  // Replace with your audience
+                issuer: _config["Jwt:Issuer"],  // Replace with your issuer
+                audience: _config["Jwt:Audience"],  // Replace with your audience
                 claims: authClaims,
                 expires: DateTime.UtcNow.AddHours(3),  // Token expiry time
                 signingCredentials: credentials

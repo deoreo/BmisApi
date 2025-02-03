@@ -29,6 +29,7 @@ namespace BmisApi.Services
             var brgyProject = new BrgyProject()
             {
                 ReferenceCode = request.ReferenceCode,
+                ProjectDescription = request.ProjectDescription,
                 ImplementingAgency = request.ImplementingAgency,
                 StartingDate = request.StartingDate,
                 CompletionDate = request.CompletionDate,
@@ -58,6 +59,7 @@ namespace BmisApi.Services
             }
 
             brgyProject.ReferenceCode = request.ReferenceCode;
+            brgyProject.ProjectDescription = request.ProjectDescription;
             brgyProject.ImplementingAgency = request.ImplementingAgency;
             brgyProject.StartingDate = request.StartingDate;
             brgyProject.CompletionDate = request.CompletionDate;
@@ -93,6 +95,7 @@ namespace BmisApi.Services
                 (
                 entity.Id,
                 entity.ReferenceCode,
+                entity.ProjectDescription,
                 entity.ImplementingAgency,
                 entity.StartingDate,
                 entity.CompletionDate,
