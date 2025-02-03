@@ -74,18 +74,17 @@ namespace BmisApi.Identity
             //    return Ok();
             //}
 
-            var userRole = await _userManager.GetRolesAsync(user);
+            var userRolesList = await _userManager.GetRolesAsync(user);
+            var userRole = userRolesList.FirstOrDefault() ?? "NoRole";
+
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id)
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(ClaimTypes.Role, userRole)
             };
 
-            foreach (var role in userRole)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role));
-            }
 
             var keyBytes = Convert.FromBase64String(_config["Jwt:Key"]);
             var key = new SymmetricSecurityKey(keyBytes);
@@ -99,7 +98,15 @@ namespace BmisApi.Identity
                 signingCredentials: credentials
             );
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new 
+            {
+                token = tokenString,
+                expiration = token.ValidTo,
+                username = user.UserName,
+                role = userRole
+            });
         }
 
         [HttpGet]
