@@ -7,7 +7,6 @@ namespace BmisApi.Identity
         public async static Task SeedRoles(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             string[] roleNames = { "Admin", "Secretary", "Clerk", "WomanDesk" };

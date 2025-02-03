@@ -13,12 +13,10 @@ namespace BmisApi.Controllers
     {
         private readonly ICrudService
             <Resident,GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
-        private readonly UserManager<IdentityUser> _userManager;
         public ResidentController(ICrudService
-            <Resident,GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service, UserManager<IdentityUser> userManager)
+            <Resident,GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service)
         {
             _service = service;
-            _userManager = userManager;
         }
 
         [HttpGet]

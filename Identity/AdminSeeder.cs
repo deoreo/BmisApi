@@ -7,7 +7,7 @@ namespace BmisApi.Identity
         public async static Task SeedAdmin(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             const string adminRole = "Admin";
             const string adminUsername = "KapitanColbert";
@@ -20,7 +20,7 @@ namespace BmisApi.Identity
             }
             else
             {
-                admin = new IdentityUser { UserName = adminUsername };
+                admin = new ApplicationUser { UserName = adminUsername };
 
                 Console.WriteLine("Enter password for the admin user: ");
                 string adminPassword = Console.ReadLine() ?? "Look1st@kapitan";

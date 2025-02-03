@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BmisApi.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public ApplicationDbContext() { }
 
@@ -25,6 +25,19 @@ namespace BmisApi.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasPostgresEnum<Sex>();
+            modelBuilder.HasPostgresEnum<BlotterStatus>();
+            modelBuilder.HasPostgresEnum<VawcStatus>();
+
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.HasIndex(u => u.UserName).IsUnique();
+
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.LastUpdatedAt);
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
 
             modelBuilder.Entity<Resident>(entity =>
             {

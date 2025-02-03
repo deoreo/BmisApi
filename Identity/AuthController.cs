@@ -13,12 +13,14 @@ namespace BmisApi.Identity
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _config;
 
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration config)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _config = config;
         }
 
@@ -32,7 +34,7 @@ namespace BmisApi.Identity
                 return BadRequest("User already exixts.");
             }
 
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
                 UserName = model.Username
             };
@@ -43,7 +45,15 @@ namespace BmisApi.Identity
                 return BadRequest(result.Errors);
             }
 
+            if (!await _roleManager.RoleExistsAsync(model.Role))
+            {
+                return BadRequest("Role does not exist");
+            }
             await _userManager.AddToRoleAsync(user, model.Role);
+
+            user.CreatedAt = DateTime.UtcNow;
+
+            await _userManager.UpdateAsync(user);
 
             return Ok("Register succesful");
         }
@@ -64,7 +74,7 @@ namespace BmisApi.Identity
             //    return Ok();
             //}
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRole = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -72,7 +82,7 @@ namespace BmisApi.Identity
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id)
             };
 
-            foreach (var role in userRoles)
+            foreach (var role in userRole)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -90,7 +100,6 @@ namespace BmisApi.Identity
             );
 
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
-
         }
 
         [HttpGet]
@@ -118,12 +127,12 @@ namespace BmisApi.Identity
             return Ok(new GetAllUserResponse(userDtos));
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost]
-        [Route("reset-password")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ResetPass(string userEmail, string newPassword)
+        [Route("admin-reset-password")]
+        public async Task<IActionResult> AdminResetPass(string userId, string newPassword)
         {
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return BadRequest("User not found.");
@@ -134,10 +143,98 @@ namespace BmisApi.Identity
 
             if (result.Succeeded)
             {
+                user.LastUpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+
                 return Ok(result);
             }
 
             return BadRequest(result.Errors);
         }
+
+        [HttpPost]
+        [Route("user-reset-password")]
+        public async Task<IActionResult> UserResetPass(string newPassword)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("User not logged in.");
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+            if (result.Succeeded)
+            {
+                user.LastUpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+
+                return Ok(result);
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPut]
+        [Route("change-role")]
+        public async Task<IActionResult> ChangeRole(string userId, string newRole)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var existingRoles = await _userManager.GetRolesAsync(user);
+            if (existingRoles.Any())
+            {
+                var removeRoles = await _userManager.RemoveFromRolesAsync(user, existingRoles);
+                if (!removeRoles.Succeeded)
+                {
+                    return BadRequest("Failed to remove previous roles");
+                }
+            }
+
+            if (!await _roleManager.RoleExistsAsync(newRole))
+            {
+                return BadRequest("Role does not exist");
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, newRole);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            user.LastUpdatedAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            return Ok("Role assigned successfully.");
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPut]
+        [Route("delete-user")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user  == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            user.DeletedAt = DateTime.UtcNow;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+
     }
 }
