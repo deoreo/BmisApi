@@ -1,4 +1,5 @@
-﻿using BmisApi.Models;
+﻿using BmisApi.Logging;
+using BmisApi.Models;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
 {
+    [AuditLog]
     [Route("api/[controller]")]
     [ApiController] 
     public class ResidentController : ControllerBase

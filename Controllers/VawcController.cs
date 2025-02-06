@@ -1,4 +1,5 @@
-﻿using BmisApi.Models.DTOs.Blotter;
+﻿using BmisApi.Logging;
+using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Incident;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.VawcService;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
 {
+    [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
     public class VawcController : ControllerBase

@@ -1,4 +1,5 @@
-﻿using BmisApi.Models;
+﻿using BmisApi.Logging;
+using BmisApi.Models;
 using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
 {
+    [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
     public class HouseholdController : ControllerBase

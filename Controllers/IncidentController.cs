@@ -5,9 +5,11 @@ using BmisApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using BmisApi.Services.IncidentService;
 using BmisApi.Models.DTOs.Incident;
+using BmisApi.Logging;
 
 namespace BmisApi.Controllers
 {
+    [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
     public class IncidentController : ControllerBase

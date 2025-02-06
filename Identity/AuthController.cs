@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BmisApi.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Text;
 
 namespace BmisApi.Identity
 {
+    [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

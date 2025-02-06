@@ -1,4 +1,5 @@
 ﻿using BmisApi.Identity;
+using BmisApi.Logging;
 using BmisApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace BmisApi.Data
         public DbSet<Official> Officials { get; set; }
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<Vawc> Vawcs { get; set; }
+        public DbSet<AuditLogModel> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -197,6 +199,19 @@ namespace BmisApi.Data
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
                 entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<AuditLogModel>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("auditlogs");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.Username).IsRequired();
+                entity.Property(e => e.Action).IsRequired();
+                entity.Property(e => e.Timestamp).IsRequired();
+                entity.Property(e => e.StatusCode).IsRequired();
             });
         }
     }
