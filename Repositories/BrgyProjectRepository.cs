@@ -45,7 +45,7 @@ namespace BmisApi.Repositories
 
         public async Task<List<BrgyProject>> GetAllAsync()
         {
-            return await _context.BrgyProjects.ToListAsync();
+            return await _context.BrgyProjects.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<BrgyProject>> GetManyByIdAsync(IEnumerable<int> ids)

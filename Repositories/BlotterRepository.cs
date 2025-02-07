@@ -48,7 +48,7 @@ namespace BmisApi.Repositories
 
         public async Task<List<Blotter>> GetAllAsync()
         {
-            return await _context.Blotters
+            return await _context.Blotters.AsNoTracking()
                 .Include(b => b.Complainant)
                 .Include(b => b.Defendant)
                 .ToListAsync();

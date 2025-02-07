@@ -29,7 +29,7 @@ namespace BmisApi.Logging
             var userRole = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
             var currentUser = User.Identity.Name;
 
-            IQueryable<AuditLogModel> query = _context.AuditLogs.OrderByDescending(l => l.Timestamp);
+            IQueryable<AuditLogModel> query = _context.AuditLogs.AsNoTracking().OrderByDescending(l => l.Timestamp);
 
             if (!userRole.Contains("Admin"))
             {
@@ -53,7 +53,7 @@ namespace BmisApi.Logging
             }
 
             // Pagination
-            var totalRecords = query.CountAsync();
+            var totalRecords = await query.CountAsync();
             var logs = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(new
@@ -61,7 +61,7 @@ namespace BmisApi.Logging
                 TotalRecords = totalRecords,
                 Page = page,
                 PageSize = pageSize,
-                logs = logs
+                Logs = logs
             });
         }
     }

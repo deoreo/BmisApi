@@ -76,7 +76,7 @@ namespace BmisApi.Repositories
 
         public IQueryable<Resident> Search(string name)
         {
-            var query = _context.Residents.Include(r => r.Household).AsQueryable();
+            var query = _context.Residents.AsNoTracking().Include(r => r.Household).AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -84,7 +84,7 @@ namespace BmisApi.Repositories
                     .Where(e => EF.Functions.ILike(e.FullName, $"%{name}%"));
             }
 
-            return query.AsNoTracking();
+            return query;
         }
     }
 }

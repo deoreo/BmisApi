@@ -47,7 +47,7 @@ namespace BmisApi.Repositories
 
         public async Task<List<Official>> GetAllAsync()
         {
-            return await _context.Officials
+            return await _context.Officials.AsNoTracking()
                 .Include(o => o.Resident)
                 .ToListAsync();
         }

@@ -48,7 +48,7 @@ namespace BmisApi.Repositories
 
         public async Task<List<Household>> GetAllAsync()
         {
-            return await _context.Households
+            return await _context.Households.AsNoTracking()
                 .Include(h => h.Members)
                 .ToListAsync();
         }

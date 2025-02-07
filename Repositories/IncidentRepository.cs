@@ -48,7 +48,7 @@ namespace BmisApi.Repositories
 
         public async Task<List<Incident>> GetAllAsync()
         {
-            return await _context.Incidents
+            return await _context.Incidents.AsNoTracking()
                 .Include(i => i.Complainant)
                 .ToListAsync();
         }

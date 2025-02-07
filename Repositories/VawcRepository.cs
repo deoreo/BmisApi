@@ -63,7 +63,7 @@ namespace BmisApi.Repositories
 
             var validIds = ids.Where(id => id > 0).ToList();
 
-            var vawc = await _context.Vawcs
+            var vawc = await _context.Vawcs.AsNoTracking()
                 .Include(r => r.Complainant)
                 .Include(r => r.Defendant)
                 .Where(r => ids.Contains(r.Id))
