@@ -74,6 +74,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-all")]
+        [NoAuditLog]
         public async Task<ActionResult<GetAllIncidentResponse>> GetAllIncidentResponse()
         {
             var response = await _service.GetAllAsync();

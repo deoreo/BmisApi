@@ -19,6 +19,7 @@ namespace BmisApi.Logging
 
         [HttpGet]
         [Route("get-logs")]
+        [NoAuditLog]
         public async Task<IActionResult> GetAuditLogs(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,

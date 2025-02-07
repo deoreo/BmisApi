@@ -77,6 +77,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-all")]
+        [NoAuditLog]
         public async Task<ActionResult<GetAllBrgyProjectResponse>> GetAllAsync()
         {
             var response = await _service.GetAllAsync();

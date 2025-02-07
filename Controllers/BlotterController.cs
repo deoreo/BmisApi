@@ -73,6 +73,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-all")]
+        [NoAuditLog]
         public async Task<ActionResult<GetAllBlotterResponse>> GetAllBlotterAsync()
         {
             var response = await _service.GetAllAsync();

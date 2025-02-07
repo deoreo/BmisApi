@@ -113,6 +113,7 @@ namespace BmisApi.Identity
 
         [HttpGet]
         [Route("get-all")]
+        [NoAuditLog]
         public async Task<ActionResult<GetAllUserResponse>> GetUsers()
         {
             var users = await _userManager.Users.ToListAsync();
