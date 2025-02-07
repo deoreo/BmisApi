@@ -73,6 +73,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-all")]
+        [NoAuditLog]
         public async Task<ActionResult<GetAllHouseholdResponse>> GetAllHouseholdAsync()
         {
             var response = await _service.GetAllAsync();
@@ -86,7 +87,6 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-members")]
-        [NoAuditLog]
         public async Task<ActionResult<GetAllResidentResponse>> GetMembersAsync(int id)
         {
             var response = await _service.GetMembersAsync(id);
