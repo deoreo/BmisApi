@@ -37,6 +37,7 @@ namespace BmisApi.Services.IncidentService
             var incident = new Incident
             {
                 Date = request.Date,
+                CaseId = request.CaseId,
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 Nature = request.Nature,
@@ -68,6 +69,7 @@ namespace BmisApi.Services.IncidentService
             }
 
             incident.Date = request.Date;
+            incident.CaseId = request.CaseId;
             incident.ComplainantId = request.ComplainantId;
             incident.Complainant = newComplainant;
             incident.Nature = request.Nature;
@@ -98,6 +100,7 @@ namespace BmisApi.Services.IncidentService
             var response = new GetIncidentResponse
                 (
                 incident.Id,
+                incident.CaseId,
                 incident.Date,
                 incident.Complainant.FullName,
                 incident.Nature,

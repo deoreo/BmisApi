@@ -1,7 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Blotter
 {
     public record UpdateBlotterRequest
-        (DateOnly Date, int ComplainantId, int DefendantId, string Nature, BlotterStatus Status, string Narrative)
+        (int CaseId, DateOnly Date, int ComplainantId, int DefendantId, string Nature, BlotterStatus Status, string Narrative)
     {
     }
 }

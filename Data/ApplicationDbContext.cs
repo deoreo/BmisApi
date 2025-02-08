@@ -99,6 +99,7 @@ namespace BmisApi.Data
                 entity.ToTable("blotters");
 
                 entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
@@ -164,6 +165,7 @@ namespace BmisApi.Data
                 entity.ToTable("incidents");
 
                 entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
@@ -189,6 +191,7 @@ namespace BmisApi.Data
                 entity.ToTable("vawc");
 
                 entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();

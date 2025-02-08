@@ -42,6 +42,7 @@ namespace BmisApi.Services.VawcService
             var vawc = new Vawc
             {
                 Date = request.Date,
+                CaseId = request.CaseId,
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 DefendantId = request.DefendantId,
@@ -82,6 +83,7 @@ namespace BmisApi.Services.VawcService
             }
 
             vawc.Date = request.Date;
+            vawc.CaseId = request.CaseId;
             vawc.ComplainantId = request.ComplainantId;
             vawc.Complainant = newComplainant;
             vawc.DefendantId = request.DefendantId;
@@ -115,6 +117,7 @@ namespace BmisApi.Services.VawcService
             var response = new GetVawcResponse
                 (
                 vawc.Id,
+                vawc.CaseId,
                 vawc.Date,
                 vawc.Complainant.FullName,
                 vawc.Defendant.FullName,

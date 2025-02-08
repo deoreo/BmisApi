@@ -43,6 +43,7 @@ namespace BmisApi.Services
             var blotter = new Blotter
             {
                 Date = request.Date,
+                CaseId = request.CaseId,
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 DefendantId = request.DefendantId,
@@ -83,6 +84,7 @@ namespace BmisApi.Services
             }
 
             blotter.Date = request.Date;
+            blotter.CaseId = request.CaseId;
             blotter.ComplainantId = request.ComplainantId;
             blotter.Complainant = newComplainant;
             blotter.DefendantId = request.DefendantId;
@@ -116,6 +118,7 @@ namespace BmisApi.Services
             var response = new GetBlotterResponse
                 (
                 blotter.Id,
+                blotter.CaseId,
                 blotter.Date,
                 blotter.Complainant.FullName,
                 blotter.Defendant.FullName,
