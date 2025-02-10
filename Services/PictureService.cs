@@ -13,8 +13,6 @@
             configuration.GetSection("FileValidation").Bind(_validationOptions);
         }
 
-
-
         public async Task<string> SavePictureFileAsync(IFormFile picture, string relativePath)
         {
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(picture.FileName)}";

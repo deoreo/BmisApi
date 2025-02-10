@@ -51,6 +51,17 @@ namespace BmisApi.Services.ResidentService.ResidentService
 
         public async Task DeleteAsync(int id)
         {
+            var resident = await _repository.GetByIdAsync(id);
+            if (resident == null)
+                throw new KeyNotFoundException($"Resident with ID {id} not found");
+
+            if (!string.IsNullOrEmpty(resident.PicturePath))
+            {
+                _pictureService.DeletePictureFile(resident.PicturePath);
+                resident.PicturePath = null;
+                await _repository.UpdateAsync(resident);
+            }
+
             await _repository.DeleteAsync(id);
         }
 

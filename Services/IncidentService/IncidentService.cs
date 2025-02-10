@@ -55,6 +55,17 @@ namespace BmisApi.Services.IncidentService
 
         public async Task DeleteAsync(int id)
         {
+            var incident = await _incidentRepository.GetByIdAsync(id);
+            if (incident == null)
+                throw new KeyNotFoundException($"Incident with ID {id} not found");
+
+            if (!string.IsNullOrEmpty(incident.PicturePath))
+            {
+                _pictureService.DeletePictureFile(incident.PicturePath);
+                incident.PicturePath = null;
+                await _incidentRepository.UpdateAsync(incident);
+            }
+
             await _incidentRepository.DeleteAsync(id);
         }
 

@@ -15,6 +15,7 @@ using BmisApi.Services.VawcService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using System.Text.Json.Serialization;
@@ -56,6 +57,9 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+// Img path
+var uploadPath = builder.Configuration["Storage:UploadPath"];
 
 // Db connection
 var configuration = builder.Configuration;
@@ -179,6 +183,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadPath ?? @"C:\uploads"),
+    RequestPath = "/uploads"  
+});
 
 app.UseHttpsRedirection();
 
