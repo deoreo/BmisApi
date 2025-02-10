@@ -11,6 +11,7 @@
         public required Resident Complainant { get; set; }
         public string Nature { get; set; } = string.Empty;
         public string Narrative { get; set; } = string.Empty;
+        public string? PicturePath { get; set; }
 
         // Crud ops
         public DateTime CreatedAt { get; set; }

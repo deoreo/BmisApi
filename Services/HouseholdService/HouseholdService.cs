@@ -167,6 +167,7 @@ namespace BmisApi.Services.HouseholdService
                     members.RegisteredVoter,
                     members.HouseholdId,
                     members.Household?.Address,
+                    members.PicturePath,
                     members.CreatedAt
                 ))
                 .ToList();

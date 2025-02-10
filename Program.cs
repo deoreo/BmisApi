@@ -9,6 +9,8 @@ using BmisApi.Services;
 using BmisApi.Services.HouseholdService;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.OfficialService;
+using BmisApi.Services.ResidentService;
+using BmisApi.Services.ResidentService.ResidentService;
 using BmisApi.Services.VawcService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -96,15 +98,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-    //.AddSignInManager<SignInManager<IdentityUser>>();
-
-// Cookies 
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.Cookie.SameSite = SameSiteMode.None;
-//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//    options.Cookie.HttpOnly = true;
-//});
 
 // JWT
 var jwtSecretKey = builder.Configuration["Jwt:Key"];
@@ -142,7 +135,7 @@ builder.Services.AddScoped<ICrudRepository<Vawc>,  VawcRepository>();
 
 // Services
 builder.Services.AddScoped
-    <ICrudService<Resident, GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>, ResidentService>();
+    <IResidentService, ResidentService>();
 builder.Services.AddScoped
     <IHouseholdService, HouseholdService>();
 builder.Services.AddScoped
@@ -155,6 +148,8 @@ builder.Services.AddScoped
     <IIncidentService, IncidentService>();
 builder.Services.AddScoped
     <IVawcService, VawcService>();
+builder.Services.AddScoped
+    <PictureService>();
 
 var app = builder.Build();
 

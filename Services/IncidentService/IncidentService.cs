@@ -2,6 +2,8 @@
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Incident;
 using BmisApi.Repositories;
+using NuGet.Protocol.Core.Types;
+using static BmisApi.Services.PictureService;
 
 namespace BmisApi.Services.IncidentService
 {
@@ -9,11 +11,13 @@ namespace BmisApi.Services.IncidentService
     {
         private readonly ICrudRepository<Incident> _incidentRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
+        private readonly PictureService _pictureService;
 
-        public IncidentService(ICrudRepository<Incident> incidentRepository, ICrudRepository<Resident> residentRepository)
+        public IncidentService(ICrudRepository<Incident> incidentRepository, ICrudRepository<Resident> residentRepository, PictureService pictureService)
         {
             _incidentRepository = incidentRepository;
             _residentRepository = residentRepository;
+            _pictureService = pictureService;
         }
 
         public async Task<GetIncidentResponse?> GetByIdAsync(int id)
@@ -105,11 +109,57 @@ namespace BmisApi.Services.IncidentService
                 incident.Complainant.FullName,
                 incident.Nature,
                 incident.Narrative,
+                incident.PicturePath,
                 incident.CreatedAt
                 );
 
             return response;
         }
-        
+
+        public async Task<string?> UpdatePictureAsync(int id, IFormFile picture)
+        {
+            try
+            {
+                _pictureService.ValidateFile(picture);
+
+                var incident = await _incidentRepository.GetByIdAsync(id);
+                if (incident == null)
+                {
+                    throw new KeyNotFoundException($"Incident with ID {id} not found");
+                }
+
+                if (!string.IsNullOrEmpty(incident.PicturePath))
+                {
+                    _pictureService.DeletePictureFile(incident.PicturePath);
+                }
+
+                var relativePath = _pictureService.CreatePicturePath("incidents");
+                var picturePath = await _pictureService.SavePictureFileAsync(picture, relativePath);
+
+                incident.PicturePath = picturePath;
+                await _incidentRepository.UpdateAsync(incident);
+
+                return picturePath;
+            }
+            catch (Exception ex) when (ex is not FileValidationException && ex is not KeyNotFoundException)
+            {
+                throw new Exception("An error occurred while updating the file", ex);
+            }
+        }
+
+        public async Task DeletePictureAsync(int id)
+        {
+            var incident = await _incidentRepository.GetByIdAsync(id);
+            if (incident == null)
+                throw new KeyNotFoundException($"Incident with ID {id} not found");
+
+            if (!string.IsNullOrEmpty(incident.PicturePath))
+            {
+                _pictureService.DeletePictureFile(incident.PicturePath);
+                incident.PicturePath = null;
+                await _incidentRepository.UpdateAsync(incident);
+            }
+        }
+
     }
 }

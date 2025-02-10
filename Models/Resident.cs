@@ -17,6 +17,7 @@ namespace BmisApi.Models
         public string? Occupation { get; set; }
         public bool RegisteredVoter { get; set; }
         public bool IsHouseholdHead { get; set; }
+        public string? PicturePath { get; set; }
 
         [NotMapped]
         public string FullName => $"{FirstName} " +

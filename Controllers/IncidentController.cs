@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using BmisApi.Services.IncidentService;
 using BmisApi.Models.DTOs.Incident;
 using BmisApi.Logging;
+using static BmisApi.Services.PictureService;
 
 namespace BmisApi.Controllers
 {
@@ -84,6 +85,51 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("upload-picture/{id}")]
+        public async Task<IActionResult> UploadPicture(int id, IFormFile picture)
+        {
+            try
+            {
+                if (picture == null || picture.Length == 0)
+                    return BadRequest("No picture provided");
+
+                var path = await _service.UpdatePictureAsync(id, picture);
+                return Ok(new { path });
+            }
+            catch (FileValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error uploading picture");
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-picture/{id}")]
+        public async Task<IActionResult> DeletePicture(int id)
+        {
+            try
+            {
+                await _service.DeletePictureAsync(id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error deleting picture");
+            }
         }
     }
 }

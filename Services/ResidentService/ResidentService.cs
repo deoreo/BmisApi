@@ -2,16 +2,21 @@
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using Microsoft.EntityFrameworkCore;
+using static BmisApi.Services.PictureService;
 
-namespace BmisApi.Services
+namespace BmisApi.Services.ResidentService.ResidentService
 {
-    public class ResidentService : ICrudService<Resident, GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest>
+    public class ResidentService : IResidentService
     {
         private readonly ICrudRepository<Resident> _repository;
+        private readonly string _uploadPath;
+        private readonly PictureService _pictureService;
 
-        public ResidentService(ICrudRepository<Resident> repository)
+        public ResidentService(ICrudRepository<Resident> repository, IConfiguration config, PictureService pictureService)
         {
             _repository = repository;
+            _uploadPath = config["Storage:UploadPath"] ?? "uploads";
+            _pictureService = pictureService;
         }
 
         public async Task<GetResidentResponse?> GetByIdAsync(int id)
@@ -75,7 +80,7 @@ namespace BmisApi.Services
         public async Task<GetAllResidentResponse> GetAllAsync()
         {
             var residents = await _repository.GetAllAsync();
-            
+
             var residentResponse = residents.Select(SetResponse).ToList();
 
             return new GetAllResidentResponse(residentResponse);
@@ -111,10 +116,57 @@ namespace BmisApi.Services
                 resident.RegisteredVoter,
                 resident.HouseholdId,
                 resident.Household?.Address,
+                resident.PicturePath,
                 resident.CreatedAt
                 );
 
             return response;
+        }
+
+        public async Task<string?> UpdatePictureAsync(int id, IFormFile picture)
+        {
+            try
+            {
+                _pictureService.ValidateFile(picture);
+
+                var resident = await _repository.GetByIdAsync(id);
+                if (resident == null)
+                {
+                    throw new KeyNotFoundException($"Resident with ID {id} not found");
+                }
+
+                if (!string.IsNullOrEmpty(resident.PicturePath))
+                {
+                    _pictureService.DeletePictureFile(resident.PicturePath);
+                }
+
+                var relativePath = _pictureService.CreatePicturePath("residents");
+                var picturePath = await _pictureService.SavePictureFileAsync(picture, relativePath);
+
+                resident.PicturePath = picturePath;
+                await _repository.UpdateAsync(resident);
+
+                return picturePath;
+            }
+            catch (Exception ex) when (ex is not FileValidationException && ex is not KeyNotFoundException)
+            {
+                throw new Exception("An error occurred while updating the file", ex);
+            }
+
+        }
+
+        public async Task DeletePictureAsync(int id)
+        {
+            var resident = await _repository.GetByIdAsync(id);
+            if (resident == null)
+                throw new KeyNotFoundException($"Resident with ID {id} not found");
+
+            if (!string.IsNullOrEmpty(resident.PicturePath))
+            {
+                _pictureService.DeletePictureFile(resident.PicturePath);
+                resident.PicturePath = null;
+                await _repository.UpdateAsync(resident);
+            }
         }
     }
 }

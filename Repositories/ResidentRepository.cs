@@ -8,7 +8,8 @@ namespace BmisApi.Repositories
     {
         // DbContext DI
         private readonly ApplicationDbContext _context;
-        public ResidentRepository(ApplicationDbContext context)
+
+        public ResidentRepository(ApplicationDbContext context, IConfiguration config) 
         {
             _context = context;
         }

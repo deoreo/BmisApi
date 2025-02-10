@@ -2,9 +2,11 @@
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
+using BmisApi.Services.ResidentService.ResidentService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static BmisApi.Services.PictureService;
 
 namespace BmisApi.Controllers
 {
@@ -13,10 +15,8 @@ namespace BmisApi.Controllers
     [ApiController] 
     public class ResidentController : ControllerBase
     {
-        private readonly ICrudService
-            <Resident,GetResidentResponse,GetAllResidentResponse,CreateResidentRequest,UpdateResidentRequest> _service;
-        public ResidentController(ICrudService
-            <Resident,GetResidentResponse, GetAllResidentResponse, CreateResidentRequest, UpdateResidentRequest> service)
+        private readonly IResidentService _service;
+        public ResidentController(IResidentService service)
         {
             _service = service;
         }
@@ -101,6 +101,49 @@ namespace BmisApi.Controllers
             return NotFound();
         }
 
-        
+        [HttpPost]
+        [Route("upload-picture/{id}")]
+        public async Task<IActionResult> UploadPicture(int id, IFormFile picture)
+        {
+            try
+            {
+                if (picture == null || picture.Length == 0)
+                    return BadRequest("No picture provided");
+
+                var path = await _service.UpdatePictureAsync(id, picture);
+                return Ok(new { path });
+            }
+            catch (FileValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error uploading picture");
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-picture/{id}")]
+        public async Task<IActionResult> DeletePicture(int id)
+        {
+            try
+            {
+                await _service.DeletePictureAsync(id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error deleting picture");
+            }
+        }
     }
 }

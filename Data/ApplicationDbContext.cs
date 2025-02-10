@@ -57,6 +57,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.Occupation);
                 entity.Property(e => e.RegisteredVoter).IsRequired();
                 entity.Property(e => e.IsHouseholdHead).IsRequired().HasDefaultValue(false);
+                entity.Property(e => e.PicturePath);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.LastUpdatedAt);
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
@@ -170,6 +171,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
                 entity.Property(e => e.Narrative).IsRequired();
+                entity.Property(e => e.PicturePath);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
