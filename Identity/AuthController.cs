@@ -199,6 +199,11 @@ namespace BmisApi.Identity
                 return NotFound("User not found.");
             }
 
+            if (user.UserName == "Kapitan")
+            {
+                return BadRequest("Cannot change the role of Kapitan.");
+            }
+
             var existingRoles = await _userManager.GetRolesAsync(user);
             if (existingRoles.Any())
             {
