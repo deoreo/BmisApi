@@ -40,13 +40,13 @@ namespace BmisApi.Services.ResidentService.ResidentService
 
             var resident = new Resident
             {
-                FirstName = request.FirstName,
-                MiddleName = request.MiddleName,
-                LastName = request.LastName,
-                Suffix = request.Suffix,
+                FirstName = request.FirstName.Trim(),
+                MiddleName = request.MiddleName?.Trim(),
+                LastName = request.LastName.Trim(),
+                Suffix = request.Suffix?.Trim(),
                 Sex = request.Sex,
                 Birthday = request.Birthday,
-                Occupation = request.Occupation,
+                Occupation = request.Occupation?.Trim(),
                 RegisteredVoter = request.RegisteredVoter
             };
 
@@ -79,10 +79,10 @@ namespace BmisApi.Services.ResidentService.ResidentService
                 throw new KeyNotFoundException($"Resident with ID {id} not found");
             }
 
-            resident.FirstName = request.FirstName;
-            resident.MiddleName = request.MiddleName;
-            resident.LastName = request.LastName;
-            resident.Suffix = request.Suffix;
+            resident.FirstName = request.FirstName.Trim();
+            resident.MiddleName = request.MiddleName?.Trim();
+            resident.LastName = request.LastName.Trim();
+            resident.Suffix = request.Suffix?.Trim();
             resident.Sex = request.Sex;
             resident.Birthday = request.Birthday;
             resident.Occupation = request.Occupation;
