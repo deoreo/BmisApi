@@ -3,6 +3,7 @@ using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Incident;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.VawcService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -10,6 +11,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireWomanDeskRole")]
     public class VawcController : ControllerBase
     {
         private readonly IVawcService _service;
@@ -51,6 +53,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteVawcAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -59,6 +62,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetVawcResponse>> UpdateIncidentAsync(int id, UpdateVawcRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -82,6 +86,13 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }

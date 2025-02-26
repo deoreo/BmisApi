@@ -12,7 +12,9 @@ namespace BmisApi.Controllers
 {
     [AuditLog]
     [Route("api/[controller]")]
-    [ApiController] 
+    [ApiController]
+    [Authorize(Policy = "RequireSecretaryRole")]
+
     public class ResidentController : ControllerBase
     {
         private readonly IResidentService _service;
@@ -54,6 +56,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteResidentAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -63,6 +66,7 @@ namespace BmisApi.Controllers
         [Authorize(Policy ="RequireAdminRole")]
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetResidentResponse>> UpdateResidentAsync(int id, UpdateResidentRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -144,6 +148,13 @@ namespace BmisApi.Controllers
             {
                 return StatusCode(500, "Error deleting picture");
             }
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }

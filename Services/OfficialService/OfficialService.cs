@@ -20,7 +20,7 @@ namespace BmisApi.Services.OfficialService
             var official = await _officialRepository.GetByIdAsync(id);
             if (official == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Official with ID {id} not found");
             }
 
             return SetResponse(official);
@@ -31,7 +31,7 @@ namespace BmisApi.Services.OfficialService
             var resident = await _residentRepository.GetByIdAsync(request.ResidentId);
             if (resident == null)
             {
-                throw new Exception($"Provided resident with id {request.ResidentId} not found");
+                throw new KeyNotFoundException($"Provided resident with id {request.ResidentId} not found");
             }
 
             var official = new Official
@@ -59,13 +59,13 @@ namespace BmisApi.Services.OfficialService
             var newResident = await _residentRepository.GetByIdAsync(request.ResidentId);
             if (newResident == null)
             {
-                throw new Exception($"Provided resident with id {request.ResidentId} not found");
+                throw new KeyNotFoundException($"Provided resident with id {request.ResidentId} not found");
             }
 
             var official = await _officialRepository.GetByIdAsync(id);
             if (official == null)
             {
-                throw new Exception($"Provided official with id {id} not found");
+                throw new KeyNotFoundException($"Provided official with id {id} not found");
             }
 
             official.Position = request.Position;

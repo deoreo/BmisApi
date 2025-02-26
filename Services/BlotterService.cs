@@ -20,7 +20,7 @@ namespace BmisApi.Services
             var blotter = await _blotterRepository.GetByIdAsync(id);
             if (blotter == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Blotter with ID {id} not found");
             }
 
             return SetResponse(blotter);
@@ -31,13 +31,13 @@ namespace BmisApi.Services
             var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (complainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var defendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (defendant == null)
             {
-                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+                throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
             var blotter = new Blotter
@@ -68,19 +68,19 @@ namespace BmisApi.Services
             var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (newComplainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var newDefendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (newDefendant == null)
             {
-                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+                throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
             var blotter = await _blotterRepository.GetByIdAsync(id);
             if (blotter == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Blotter with ID {id} not found");
             }
 
             blotter.Date = request.Date;

@@ -3,13 +3,11 @@ using BmisApi.Identity;
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.BrgyProject;
-using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using BmisApi.Services;
 using BmisApi.Services.HouseholdService;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.OfficialService;
-using BmisApi.Services.ResidentService;
 using BmisApi.Services.ResidentService.ResidentService;
 using BmisApi.Services.VawcService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,9 +64,7 @@ var configuration = builder.Configuration;
 var username = configuration["db_username"];
 var password = configuration["db_password"];
 
-var connectionString = configuration.GetConnectionString("DefaultConnection")?
-    .Replace("{USERNAME}", username)
-    .Replace("{PASSWORD}", password);
+var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 dataSourceBuilder.MapEnum<Sex>();
@@ -81,16 +77,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Cors
 var FrontendApp = "_allowFrontendOrigin";
+var origin = configuration["FrontendOrigin:Origin"];
+
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: FrontendApp,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins(origin ?? "http://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
+            //.AllowCredentials();
         });
 });
 
@@ -118,7 +116,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSecretKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSecretKey ?? "fa6e4a34293c2ad87a009973dabba27823c1d438579428ea3b442749093f527b5f9fafd51adf961a76e32987b6c0ede6c667ff02a1c358143b095926fd5a9fde9de04b5fcb20ffb21e85e259f9ef6d0fdf5bdb3bece85de6f468977f7da7e7d29a3c370cca3c00fb60c3294b5ba25688878d67fd6fa19cac5378e51ce5ed753c")),
             ClockSkew = TimeSpan.Zero
         };
 
@@ -126,7 +124,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+    .AddPolicy("RequireSecretaryRole", policy => policy.RequireRole("Admin", "Secretary"))
+    .AddPolicy("RequireClerkRole", policy => policy.RequireRole("Admin", "Secretary", "Clerk"))
+    .AddPolicy("RequireWomanDeskRole", policy => policy.RequireRole("Admin", "Secretary", "WomanDesk"));
 
 // Repositories
 builder.Services.AddScoped<ICrudRepository<Resident>, ResidentRepository>();
@@ -157,7 +158,6 @@ builder.Services.AddScoped
 
 var app = builder.Build();
 
-//app.MapIdentityApi<IdentityUser>();
 app.UseCors(FrontendApp);
 
 app.UseAuthentication();
@@ -166,6 +166,35 @@ app.UseAuthorization();
 // Seed admin user
 using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        
+        // Wait for database to be available
+        var retry = 10;
+        while (retry > 0)
+        {
+            try
+            {
+                context.Database.Migrate();
+                break;
+            }
+            catch (Exception)
+            {
+                retry--;
+                if (retry == 0) throw;
+                Thread.Sleep(2000); // Wait 2 seconds before retrying
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        throw;
+    }
+
     try
     {
         await RoleSeeder.SeedRoles(scope.ServiceProvider);
@@ -191,7 +220,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"  
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.MapControllers()
     .RequireAuthorization();

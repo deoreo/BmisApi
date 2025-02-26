@@ -26,6 +26,7 @@ namespace BmisApi.Identity
             _config = config;
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -111,6 +112,7 @@ namespace BmisApi.Identity
             });
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet]
         [Route("get-all")]
         [NoAuditLog]

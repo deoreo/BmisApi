@@ -24,7 +24,7 @@ namespace BmisApi.Services.ResidentService.ResidentService
             var resident = await _repository.GetByIdAsync(id);
             if (resident == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Resident with ID {id} not found");
             }
 
             return SetResponse(resident);
@@ -32,6 +32,12 @@ namespace BmisApi.Services.ResidentService.ResidentService
 
         public async Task<GetResidentResponse> CreateAsync(CreateResidentRequest request)
         {
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Birthday >= dateNow)
+            {
+                throw new Exception("Invalid birthday");
+            }
+
             var resident = new Resident
             {
                 FirstName = request.FirstName,
@@ -70,7 +76,7 @@ namespace BmisApi.Services.ResidentService.ResidentService
             var resident = await _repository.GetByIdAsync(id);
             if (resident == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Resident with ID {id} not found");
             }
 
             resident.FirstName = request.FirstName;

@@ -2,6 +2,7 @@
 using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -9,6 +10,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy ="RequireSecretaryRole")]
     public class BlotterController : ControllerBase
     {
         private readonly ICrudService
@@ -52,6 +54,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy ="RequireAdminRole")]
         public async Task<ActionResult> DeleteBlotterAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -60,6 +63,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetBlotterResponse>> UpdateBlotterAsync(int id, UpdateBlotterRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -83,6 +87,13 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }

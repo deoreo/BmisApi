@@ -20,7 +20,7 @@ namespace BmisApi.Services.VawcService
             var vawc = await _vawcRepository.GetByIdAsync(id);
             if (vawc == null)
             {
-                return null;
+                throw new KeyNotFoundException($"VAWC with ID {id} not found");
             }
 
             return SetResponse(vawc);
@@ -30,13 +30,13 @@ namespace BmisApi.Services.VawcService
             var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (complainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var defendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (defendant == null)
             {
-                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+                throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
             var vawc = new Vawc
@@ -67,19 +67,19 @@ namespace BmisApi.Services.VawcService
             var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (newComplainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var newDefendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (newDefendant == null)
             {
-                throw new Exception($"Provided defendant resident with id {request.DefendantId} not found.");
+                throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
             var vawc = await _vawcRepository.GetByIdAsync(id);
             if (vawc == null)
             {
-                return null;
+                throw new KeyNotFoundException($"VAWC with ID {id} not found");
             }
 
             vawc.Date = request.Date;

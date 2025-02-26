@@ -25,7 +25,7 @@ namespace BmisApi.Services.IncidentService
             var incident = await _incidentRepository.GetByIdAsync(id);
             if (incident == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Incident with ID {id} not found");
             }
 
             return SetResponse(incident);
@@ -35,7 +35,7 @@ namespace BmisApi.Services.IncidentService
             var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (complainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var incident = new Incident
@@ -74,13 +74,13 @@ namespace BmisApi.Services.IncidentService
             var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
             if (newComplainant == null)
             {
-                throw new Exception($"Provided complainant resident with id {request.ComplainantId} not found");
+                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
             var incident = await _incidentRepository.GetByIdAsync(id);
             if (incident == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Incident with ID {id} not found");
             }
 
             incident.Date = request.Date;

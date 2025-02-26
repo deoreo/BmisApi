@@ -19,7 +19,7 @@ namespace BmisApi.Services
             var brgyProject = await _repository.GetByIdAsync(id);
             if (brgyProject == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Project with ID {id} not found");
             }
 
             return SetResponse(brgyProject);
@@ -55,7 +55,7 @@ namespace BmisApi.Services
             var brgyProject = await _repository.GetByIdAsync(id);
             if (brgyProject == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Project with ID {id} not found");
             }
 
             brgyProject.ReferenceCode = request.ReferenceCode;

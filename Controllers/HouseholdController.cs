@@ -4,6 +4,7 @@ using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services;
 using BmisApi.Services.HouseholdService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -11,6 +12,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireSecretaryRole")]
     public class HouseholdController : ControllerBase
     {
         private readonly IHouseholdService _service;
@@ -52,6 +54,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteHouseholdAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -60,6 +63,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetHouseholdResponse>> UpdateHouseholdAsync(int id, UpdateHouseholdRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -96,6 +100,13 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }

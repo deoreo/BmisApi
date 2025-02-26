@@ -7,12 +7,14 @@ using BmisApi.Services.IncidentService;
 using BmisApi.Models.DTOs.Incident;
 using BmisApi.Logging;
 using static BmisApi.Services.PictureService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BmisApi.Controllers
 {
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireSecretaryRole")]
     public class IncidentController : ControllerBase
     {
         private readonly IIncidentService _service;
@@ -54,6 +56,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteIncidentAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -62,6 +65,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetIncidentResponse>> UpdateIncidentAsync(int id, UpdateIncidentRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -130,6 +134,13 @@ namespace BmisApi.Controllers
             {
                 return StatusCode(500, "Error deleting picture");
             }
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }

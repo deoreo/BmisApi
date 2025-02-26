@@ -3,6 +3,7 @@ using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Household;
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services.OfficialService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BmisApi.Controllers
@@ -10,6 +11,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireSecretaryRole")]
     public class OfficialController : ControllerBase
     {
         private readonly IOfficialService _service;
@@ -52,6 +54,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteOfficialAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -60,6 +63,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetOfficialResponse>> UpdateOfficialAsync(int id, UpdateOfficialRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -83,6 +87,13 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
 
     }

@@ -10,7 +10,7 @@ namespace BmisApi.Identity
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             const string adminRole = "Admin";
-            const string adminUsername = "KapitanColbert";
+            const string adminUsername = "Kapitan";
             var admin = await userManager.FindByNameAsync(adminUsername);
             if (admin is not null)
             {
@@ -22,8 +22,7 @@ namespace BmisApi.Identity
             {
                 admin = new ApplicationUser { UserName = adminUsername };
 
-                Console.WriteLine("Enter password for the admin user: ");
-                string adminPassword = Console.ReadLine() ?? "Look1st@kapitan";
+                string adminPassword = "Look1st@kapitan";
 
                 var result = await userManager.CreateAsync(admin, adminPassword);
 

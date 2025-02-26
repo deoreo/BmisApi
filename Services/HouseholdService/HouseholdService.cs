@@ -21,7 +21,7 @@ namespace BmisApi.Services.HouseholdService
             var household = await _householdRepository.GetByIdAsync(id);
             if (household == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Household with ID {id} not found");
             }
 
             return SetResponse(household);
@@ -35,7 +35,7 @@ namespace BmisApi.Services.HouseholdService
 
             if (head == null)
             {
-                throw new Exception($"Provided head resident with id {request.HeadId} not found");
+                throw new KeyNotFoundException($"Provided head resident with id {request.HeadId} not found");
             }
 
             if (!members.Any(m => m.Id == head.Id))
@@ -81,7 +81,7 @@ namespace BmisApi.Services.HouseholdService
             var household = await _householdRepository.GetByIdAsync(id);
             if (household == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Household with ID {id} not found");
             }
 
             if (request.NewHeadId.HasValue)
@@ -89,7 +89,7 @@ namespace BmisApi.Services.HouseholdService
                 var newHead = await _residentRepository.GetByIdAsync(request.NewHeadId.Value);
                 if (newHead == null)
                 {
-                    throw new Exception($"Provided head resident with id {request.NewHeadId} not found");
+                    throw new KeyNotFoundException($"Provided head resident with id {request.NewHeadId} not found");
                 }
 
                 var head = household.GetHead();
@@ -148,7 +148,7 @@ namespace BmisApi.Services.HouseholdService
 
             if (household == null)
             {
-                throw new Exception($"Provided household with id {id} not found");
+                throw new KeyNotFoundException($"Provided household with id {id} not found");
             }
 
             var members = household.Members

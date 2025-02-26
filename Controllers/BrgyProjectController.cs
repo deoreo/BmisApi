@@ -13,6 +13,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireSecretaryRole")]
     public class BrgyProjectController : ControllerBase
     {
         private readonly ICrudService
@@ -56,6 +57,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
             await _service.DeleteAsync(id);
@@ -64,6 +66,7 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("edit/{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult<GetBrgyProjectResponse>> UpdateAsync(int id, UpdateBrgyProjectRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
@@ -87,6 +90,13 @@ namespace BmisApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("export")]
+        public IActionResult ExportAsync()
+        {
+            return Ok();
         }
     }
 }
