@@ -39,10 +39,10 @@ namespace BmisApi.Identity
 
             var user = new ApplicationUser
             {
-                UserName = model.Username
+                UserName = model.Username.Trim(),
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password.Trim());
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
