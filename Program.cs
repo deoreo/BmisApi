@@ -218,7 +218,7 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadPath ?? @"C:\uploads"),
+    FileProvider = new PhysicalFileProvider( @"C:\uploads"),
     // FileProvider = new PhysicalFileProvider(uploadPath ?? @"C:\uploads"),
     RequestPath = "/uploads"  
 });

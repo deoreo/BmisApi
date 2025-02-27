@@ -242,6 +242,11 @@ namespace BmisApi.Identity
                 return NotFound("User not found.");
             }
 
+            if (user.UserName == "Kapitan")
+            {
+                return BadRequest("Cannot delete the account of Kapitan.");
+            }
+
             user.DeletedAt = DateTime.UtcNow;
 
             var result = await _userManager.UpdateAsync(user);
