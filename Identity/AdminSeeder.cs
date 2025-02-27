@@ -14,6 +14,12 @@ namespace BmisApi.Identity
             var admin = await userManager.FindByNameAsync(adminUsername);
             if (admin is not null)
             {
+                if (admin.DeletedAt != null)
+                {
+                    admin.DeletedAt = null;
+                    await userManager.UpdateAsync(admin);
+                }
+
                 await userManager.AddToRoleAsync(admin, adminRole);
 
                 Console.WriteLine("Admin permisions granted.");
