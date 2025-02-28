@@ -127,6 +127,7 @@ namespace BmisApi.Services.HouseholdService
                 }
             }
 
+            household.Address = request.Address;
             household.LastUpdatedAt = DateTime.UtcNow;
             await _householdRepository.UpdateAsync(household);
 
