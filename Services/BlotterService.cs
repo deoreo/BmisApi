@@ -40,6 +40,12 @@ namespace BmisApi.Services
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
+            }
+
             var blotter = new Blotter
             {
                 Date = request.Date,
@@ -75,6 +81,12 @@ namespace BmisApi.Services
             if (newDefendant == null)
             {
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
+            }
+
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
             }
 
             var blotter = await _blotterRepository.GetByIdAsync(id);

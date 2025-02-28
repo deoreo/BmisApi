@@ -34,6 +34,8 @@ namespace BmisApi.Services.OfficialService
                 throw new KeyNotFoundException($"Provided resident with id {request.ResidentId} not found");
             }
 
+
+
             var official = new Official
             {
                 Position = request.Position,

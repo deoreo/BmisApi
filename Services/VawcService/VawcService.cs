@@ -33,6 +33,12 @@ namespace BmisApi.Services.VawcService
                 throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
+            }
+
             var defendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (defendant == null)
             {
@@ -74,6 +80,12 @@ namespace BmisApi.Services.VawcService
             if (newDefendant == null)
             {
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
+            }
+
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
             }
 
             var vawc = await _vawcRepository.GetByIdAsync(id);

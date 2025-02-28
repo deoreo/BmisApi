@@ -38,6 +38,12 @@ namespace BmisApi.Services.IncidentService
                 throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
             }
 
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
+            }
+
             var incident = new Incident
             {
                 Date = request.Date,
@@ -75,6 +81,12 @@ namespace BmisApi.Services.IncidentService
             if (newComplainant == null)
             {
                 throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
+            }
+
+            var dateNow = DateOnly.FromDateTime(DateTime.Today);
+            if (request.Date >= dateNow)
+            {
+                throw new Exception("Invalid date");
             }
 
             var incident = await _incidentRepository.GetByIdAsync(id);

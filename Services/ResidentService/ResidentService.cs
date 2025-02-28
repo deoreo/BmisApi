@@ -2,6 +2,7 @@
 using BmisApi.Models.DTOs.Resident;
 using BmisApi.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using static BmisApi.Services.PictureService;
 
 namespace BmisApi.Services.ResidentService.ResidentService
@@ -40,13 +41,13 @@ namespace BmisApi.Services.ResidentService.ResidentService
 
             var resident = new Resident
             {
-                FirstName = request.FirstName.Trim(),
-                MiddleName = request.MiddleName?.Trim(),
-                LastName = request.LastName.Trim(),
+                FirstName = ToTitleCase(request.FirstName.Trim()),
+                MiddleName = ToTitleCase(request.MiddleName?.Trim()),
+                LastName = ToTitleCase(request.LastName.Trim()),
                 Suffix = request.Suffix?.Trim(),
                 Sex = request.Sex,
                 Birthday = request.Birthday,
-                Occupation = request.Occupation?.Trim(),
+                Occupation = ToTitleCase(request.Occupation?.Trim()),
                 RegisteredVoter = request.RegisteredVoter
             };
 
@@ -79,13 +80,13 @@ namespace BmisApi.Services.ResidentService.ResidentService
                 throw new KeyNotFoundException($"Resident with ID {id} not found");
             }
 
-            resident.FirstName = request.FirstName.Trim();
-            resident.MiddleName = request.MiddleName?.Trim();
-            resident.LastName = request.LastName.Trim();
+            resident.FirstName = ToTitleCase(request.FirstName.Trim());
+            resident.MiddleName = ToTitleCase(request.MiddleName?.Trim());
+            resident.LastName = ToTitleCase(request.LastName.Trim());
             resident.Suffix = request.Suffix?.Trim();
             resident.Sex = request.Sex;
             resident.Birthday = request.Birthday;
-            resident.Occupation = request.Occupation;
+            resident.Occupation = ToTitleCase(request.Occupation.Trim());
             resident.RegisteredVoter = request.RegisteredVoter;
             resident.LastUpdatedAt = DateTime.UtcNow;
 
@@ -184,6 +185,15 @@ namespace BmisApi.Services.ResidentService.ResidentService
                 resident.PicturePath = null;
                 await _repository.UpdateAsync(resident);
             }
+        }
+
+        public static string ToTitleCase(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(input.ToLower());
         }
     }
 }
