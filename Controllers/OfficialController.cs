@@ -5,6 +5,7 @@ using BmisApi.Models.DTOs.Resident;
 using BmisApi.Services.OfficialService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BmisApi.Controllers
 {
@@ -36,20 +37,29 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<GetOfficialResponse>> CreateOfficialasync(CreateOfficialRequest request)
+        public async Task<IActionResult> CreateOfficialasync([FromBody]CreateOfficialRequest request)
         {
-            var response = await _service.CreateAsync(request);
-            if (response == null)
+            //var response = await _service.CreateAsync(request);
+            //if (response == null)
+            //{
+            //    return BadRequest("Failed to register official.");
+            //}
+
+            try
             {
-                return BadRequest("Failed to register official.");
+                var response = await _service.CreateAsync(request);
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return BadRequest(new { messagae = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { messagae = ex.Message });
             }
 
-            // TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetResidentByIdAsync),
-            //    new { id = response.ResidentId },
-            //    response);
-            return Ok(response);
         }
 
         [HttpPut]

@@ -34,7 +34,34 @@ namespace BmisApi.Services.OfficialService
                 throw new KeyNotFoundException($"Provided resident with id {request.ResidentId} not found");
             }
 
+            var allOfficials = await _officialRepository.GetAllAsync();
 
+            var existingOfficial = allOfficials.FirstOrDefault(o => o.ResidentId == request.ResidentId);
+            if (existingOfficial != null)
+            {
+                throw new InvalidOperationException($"Resident with id {request.ResidentId} already holds the position of {existingOfficial.Position}");
+            }
+
+            if (request.Position.ToLower() == "barangay captain" && allOfficials.Any(o => o.Position.ToLower() == "barangay captain"))
+            {
+                throw new InvalidOperationException("Only one captain is allowed.");
+            }
+            if (request.Position.ToLower() == "secretary" && allOfficials.Count(o => o.Position.ToLower() == "secretary") >= 1)
+            {
+                throw new InvalidOperationException("Only one secretary is allowed.");
+            }
+            if (request.Position.ToLower() == "treasurer" && allOfficials.Count(o => o.Position.ToLower() == "treasurer") >= 1)
+            {
+                throw new InvalidOperationException("Only one treasurer is allowed.");
+            }
+            if (request.Position.ToLower() == "sk chairman" && allOfficials.Count(o => o.Position.ToLower() == "sk chairman") >= 1)
+            {
+                throw new InvalidOperationException("Only one SK chairman is allowed.");
+            }
+            if (request.Position.ToLower() == "councilor" && allOfficials.Count(o => o.Position.ToLower() == "councilor") >= 7)
+            {
+                throw new InvalidOperationException("Only seven councilors are allowed.");
+            }
 
             var official = new Official
             {
@@ -67,7 +94,36 @@ namespace BmisApi.Services.OfficialService
             var official = await _officialRepository.GetByIdAsync(id);
             if (official == null)
             {
-                throw new KeyNotFoundException($"Provided official with id {id} not found");
+                throw new InvalidOperationException($"Provided official with id {id} not found");
+            }
+
+            var allOfficials = await _officialRepository.GetAllAsync();
+
+            var existingOfficial = allOfficials.FirstOrDefault(o => o.ResidentId == request.ResidentId);
+            if (existingOfficial != null)
+            {
+                throw new InvalidOperationException($"Resident with id {request.ResidentId} already holds the position of {existingOfficial.Position}");
+            }
+
+            if (request.Position.ToLower() == "barangay captain" && allOfficials.Any(o => o.Position.ToLower() == "barangay captain"))
+            {
+                throw new InvalidOperationException("Only one captain is allowed.");
+            }
+            if (request.Position.ToLower() == "secretary" && allOfficials.Count(o => o.Position.ToLower() == "secretary") >= 1)
+            {
+                throw new InvalidOperationException("Only one secretary is allowed.");
+            }
+            if (request.Position.ToLower() == "treasurer" && allOfficials.Count(o => o.Position.ToLower() == "treasurer") >= 1)
+            {
+                throw new InvalidOperationException("Only one treasurer is allowed.");
+            }
+            if (request.Position.ToLower() == "sk chairman" && allOfficials.Count(o => o.Position.ToLower() == "sk chairman") >= 1)
+            {
+                throw new InvalidOperationException("Only one SK chairman is allowed.");
+            }
+            if (request.Position.ToLower() == "councilor" && allOfficials.Count(o => o.Position.ToLower() == "councilor") >= 7)
+            {
+                throw new InvalidOperationException("Only seven councilors are allowed.");
             }
 
             official.Position = request.Position;

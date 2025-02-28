@@ -52,8 +52,6 @@ namespace BmisApi.Repositories
                 .ToListAsync();
         }
 
-        
-
         public Task<List<Official>> GetManyByIdAsync(IEnumerable<int> ids)
         {
             throw new NotImplementedException();
