@@ -34,7 +34,7 @@ namespace BmisApi.Services.ResidentService.ResidentService
         public async Task<GetResidentResponse> CreateAsync(CreateResidentRequest request)
         {
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
-            if (request.Birthday >= dateNow)
+            if (request.Birthday > dateNow)
             {
                 throw new Exception("Invalid birthday");
             }

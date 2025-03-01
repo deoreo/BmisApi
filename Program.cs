@@ -5,8 +5,10 @@ using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.BrgyProject;
 using BmisApi.Repositories;
 using BmisApi.Services;
+using BmisApi.Services.BlotterService;
 using BmisApi.Services.HouseholdService;
 using BmisApi.Services.IncidentService;
+using BmisApi.Services.NarrativeService;
 using BmisApi.Services.OfficialService;
 using BmisApi.Services.ResidentService.ResidentService;
 using BmisApi.Services.VawcService;
@@ -72,8 +74,6 @@ var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 dataSourceBuilder.MapEnum<Sex>();
-dataSourceBuilder.MapEnum<BlotterStatus>();
-dataSourceBuilder.MapEnum<VawcStatus>();
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -143,6 +143,7 @@ builder.Services.AddScoped<ICrudRepository<BrgyProject>, BrgyProjectRepository>(
 builder.Services.AddScoped<ICrudRepository<Official>, OfficialRepository>();
 builder.Services.AddScoped<ICrudRepository<Incident>, IncidentRepository>();
 builder.Services.AddScoped<ICrudRepository<Vawc>,  VawcRepository>();
+builder.Services.AddScoped<ICrudRepository<Narrative>, NarrativeRepository>();
 
 // Services
 builder.Services.AddScoped
@@ -150,7 +151,7 @@ builder.Services.AddScoped
 builder.Services.AddScoped
     <IHouseholdService, HouseholdService>();
 builder.Services.AddScoped
-    <ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>, BlotterService>();
+    <IBlotterService, BlotterService>();
 builder.Services.AddScoped
     <ICrudService<BrgyProject, GetBrgyProjectResponse, GetAllBrgyProjectResponse, CreateBrgyProjectRequest, UpdateBrgyProjectRequest>, BrgyProjectService>();
 builder.Services.AddScoped
@@ -159,6 +160,8 @@ builder.Services.AddScoped
     <IIncidentService, IncidentService>();
 builder.Services.AddScoped
     <IVawcService, VawcService>();
+builder.Services.AddScoped
+    <INarrativeService, NarrativeService>();
 builder.Services.AddScoped
     <PictureService>();
 

@@ -1,30 +1,25 @@
 ﻿using BmisApi.Logging;
-using BmisApi.Models;
-using BmisApi.Models.DTOs.Blotter;
-using BmisApi.Models.DTOs.Narrative;
-using BmisApi.Models.DTOs.Resident;
-using BmisApi.Services;
-using BmisApi.Services.BlotterService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BmisApi.Services.NarrativeService;
+using BmisApi.Models.DTOs.Narrative;
 
 namespace BmisApi.Controllers
 {
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy ="RequireSecretaryRole")]
-    public class BlotterController : ControllerBase
+    public class NarrativeController : ControllerBase
     {
-        private readonly IBlotterService _service;
-        public BlotterController(IBlotterService service)
+        private readonly INarrativeService _service;
+        public NarrativeController(INarrativeService service)
         {
             _service = service;
         }
 
         [HttpGet]
         [Route("get/{id}")]
-        public async Task<ActionResult<GetBlotterResponse>> GetBlotterByIdAsync(int id)
+        public async Task<ActionResult<GetNarrativeResponse>> GetNarrativeByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
             if (response == null)
@@ -37,12 +32,12 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<ActionResult<GetBlotterResponse>> CreateBlotterAsync(CreateBlotterRequest request)
+        public async Task<ActionResult<GetNarrativeResponse>> CreateNarrativeAsync(CreateNarrativeRequest request)
         {
             var response = await _service.CreateAsync(request);
             if (response == null)
             {
-                return BadRequest("Failed to register blotter.");
+                return BadRequest("Failed to register narrative.");
             }
 
             return Ok(response);
@@ -50,8 +45,8 @@ namespace BmisApi.Controllers
 
         [HttpPut]
         [Route("delete/{id}")]
-        [Authorize(Policy ="RequireAdminRole")]
-        public async Task<ActionResult> DeleteBlotterAsync(int id)
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<ActionResult> DeleteNarrativeAsync(int id)
         {
             await _service.DeleteAsync(id);
             return NoContent();
@@ -60,12 +55,12 @@ namespace BmisApi.Controllers
         [HttpPut]
         [Route("edit/{id}")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<ActionResult<GetBlotterResponse>> UpdateBlotterAsync(int id, UpdateBlotterRequest request)
+        public async Task<ActionResult<GetNarrativeResponse>> UpdateNarrativeAsync(int id, UpdateNarrativeRequest request)
         {
             var response = await _service.UpdateAsync(request, id);
             if (response is null)
             {
-                return BadRequest("Failed to update blotter");
+                return BadRequest("Failed to update narrative");
             }
 
             return NoContent();
@@ -74,23 +69,9 @@ namespace BmisApi.Controllers
         [HttpGet]
         [Route("get-all")]
         [NoAuditLog]
-        public async Task<ActionResult<GetAllBlotterResponse>> GetAllBlotterAsync()
+        public async Task<ActionResult<GetAllNarrativeResponse>> GetAllNarrativeAsync()
         {
             var response = await _service.GetAllAsync();
-            if (response == null)
-            {
-                return BadRequest("Failed to get blotters");
-            }
-
-            return Ok(response);
-        }
-
-        [HttpGet]
-        [Route("get-narratives")]
-        [NoAuditLog]
-        public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
-        {
-            var response = await _service.GetNarrativesAsync(id);
             if (response == null)
             {
                 return BadRequest("Failed to get narratives");

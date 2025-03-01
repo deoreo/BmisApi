@@ -18,6 +18,7 @@ namespace BmisApi.Repositories
             return await _context.Blotters
                 .Include(b => b.Complainant)
                 .Include(b => b.Defendant)
+                .Include(b => b.NarrativeReports)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
         public async Task<Blotter> CreateAsync(Blotter entity)

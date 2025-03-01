@@ -10,8 +10,7 @@ namespace BmisApi.Models.DTOs.Blotter
         string ComplainantName, 
         string DefendantName, 
         string Nature, 
-        BlotterStatus Status, 
-        string Narrative, 
+        string Status, 
         DateTime CreatedAt)
     {
     }

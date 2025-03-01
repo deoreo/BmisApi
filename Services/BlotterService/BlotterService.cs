@@ -1,18 +1,24 @@
-﻿using BmisApi.Models;
-using BmisApi.Models.DTOs.Blotter;
+﻿using BmisApi.Models.DTOs.Blotter;
+using BmisApi.Models;
 using BmisApi.Repositories;
+using BmisApi.Models.DTOs.Narrative;
 
-namespace BmisApi.Services
+namespace BmisApi.Services.BlotterService
 {
-    public class BlotterService : ICrudService<Blotter, GetBlotterResponse, GetAllBlotterResponse, CreateBlotterRequest, UpdateBlotterRequest>
+    public class BlotterService : IBlotterService
     {
         private readonly ICrudRepository<Blotter> _blotterRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
+        private readonly ICrudRepository<Narrative> _narrativeRepository;
 
-        public BlotterService(ICrudRepository<Blotter> blotterRepository, ICrudRepository<Resident> residentRepository)
+        public BlotterService(ICrudRepository<Blotter> blotterRepository,
+
+            ICrudRepository<Resident> residentRepository,
+            ICrudRepository<Narrative> narrativeRepository)
         {
             _blotterRepository = blotterRepository;
             _residentRepository = residentRepository;
+            _narrativeRepository = narrativeRepository;
         }
 
         public async Task<GetBlotterResponse?> GetByIdAsync(int id)
@@ -41,10 +47,14 @@ namespace BmisApi.Services
             }
 
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
-            if (request.Date >= dateNow)
+            if (request.Date > dateNow)
             {
                 throw new Exception("Invalid date");
             }
+
+            
+
+            var narratives = new List<Narrative> {  };
 
             var blotter = new Blotter
             {
@@ -56,10 +66,18 @@ namespace BmisApi.Services
                 Defendant = defendant,
                 Nature = request.Nature,
                 Status = request.Status,
-                Narrative = request.Narrative
+                NarrativeReports = narratives
             };
+            await _blotterRepository.CreateAsync(blotter);
 
-            blotter = await _blotterRepository.CreateAsync(blotter);
+            var narrative = new Narrative
+            {
+                ReportId = blotter.Id,
+                Status = request.Status,
+                NarrativeReport = request.Narrative,
+                Date = request.Date,
+            };
+            await _narrativeRepository.CreateAsync(narrative);
 
             return SetResponse(blotter);
         }
@@ -102,8 +120,6 @@ namespace BmisApi.Services
             blotter.DefendantId = request.DefendantId;
             blotter.Defendant = newDefendant;
             blotter.Nature = request.Nature;
-            blotter.Status = request.Status;
-            blotter.Narrative = request.Narrative;
             blotter.LastUpdatedAt = DateTime.UtcNow;
 
             await _blotterRepository.UpdateAsync(blotter);
@@ -125,6 +141,29 @@ namespace BmisApi.Services
             throw new NotImplementedException();
         }
 
+        public async Task<GetAllNarrativeResponse> GetNarrativesAsync(int id)
+        {
+            var blotter = await _blotterRepository.GetByIdAsync(id);
+            if (blotter == null)
+            {
+                throw new KeyNotFoundException($"Provided blotter with id {id} not found");
+            }
+
+            var narratives = blotter.NarrativeReports
+                .OrderBy(n => n.CreatedAt)
+                .Select(narratives => new GetNarrativeResponse
+                (
+                    narratives.ReportId,
+                    narratives.Status,
+                    narratives.NarrativeReport,
+                    narratives.Date,
+                    narratives.CreatedAt
+                ))
+                .ToList();
+
+            return new GetAllNarrativeResponse(narratives);
+        }
+
         public GetBlotterResponse SetResponse(Blotter blotter)
         {
             var response = new GetBlotterResponse
@@ -136,7 +175,6 @@ namespace BmisApi.Services
                 blotter.Defendant.FullName,
                 blotter.Nature,
                 blotter.Status,
-                blotter.Narrative,
                 blotter.CreatedAt
                 );
 

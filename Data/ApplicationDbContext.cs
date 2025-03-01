@@ -21,14 +21,13 @@ namespace BmisApi.Data
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<Vawc> Vawcs { get; set; }
         public DbSet<AuditLogModel> AuditLogs { get; set; }
+        public DbSet<Narrative> Narratives { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasPostgresEnum<Sex>();
-            modelBuilder.HasPostgresEnum<BlotterStatus>();
-            modelBuilder.HasPostgresEnum<VawcStatus>();
 
             modelBuilder.Entity<ApplicationUser>(entity =>
             {
@@ -97,6 +96,10 @@ namespace BmisApi.Data
                       .WithMany()
                       .HasForeignKey(b => b.DefendantId);
 
+                entity.HasMany(b => b.NarrativeReports)
+                       .WithOne()
+                       .HasForeignKey(n => n.ReportId);
+
                 entity.ToTable("blotters");
 
                 entity.Property(e => e.Id).IsRequired();
@@ -105,8 +108,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
-                entity.Property(e => e.Status).IsRequired().HasConversion<string>();
-                entity.Property(e => e.Narrative).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
@@ -198,7 +200,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
-                entity.Property(e => e.Status).IsRequired().HasConversion<string>();
+                entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
@@ -217,6 +219,23 @@ namespace BmisApi.Data
                 entity.Property(e => e.Action).IsRequired();
                 entity.Property(e => e.Timestamp).IsRequired();
                 entity.Property(e => e.StatusCode).IsRequired();
+            });
+
+            modelBuilder.Entity<Narrative>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("narratives");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.ReportId).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.NarrativeReport).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
             });
         }
     }
