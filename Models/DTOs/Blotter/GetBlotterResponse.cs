@@ -5,7 +5,7 @@ namespace BmisApi.Models.DTOs.Blotter
 {
     public record GetBlotterResponse
         (int Id, 
-        int CaseId,
+        string CaseId,
         DateOnly Date, 
         string ComplainantName, 
         string DefendantName, 

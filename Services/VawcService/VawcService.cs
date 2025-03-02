@@ -48,7 +48,7 @@ namespace BmisApi.Services.VawcService
             var vawc = new Vawc
             {
                 Date = request.Date,
-                CaseId = request.CaseId,
+                CaseId = await GenerateCaseIdAsync(),
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 DefendantId = request.DefendantId,
@@ -95,7 +95,6 @@ namespace BmisApi.Services.VawcService
             }
 
             vawc.Date = request.Date;
-            vawc.CaseId = request.CaseId;
             vawc.ComplainantId = request.ComplainantId;
             vawc.Complainant = newComplainant;
             vawc.DefendantId = request.DefendantId;
@@ -142,6 +141,28 @@ namespace BmisApi.Services.VawcService
             return response;
         }
 
-        
+        private async Task<string> GenerateCaseIdAsync()
+        {
+            int year = DateTime.UtcNow.Year % 100; // Get last two digits of the year
+            int nextNumber = 1;
+
+            var allBlotters = await _vawcRepository.GetAllAsync();
+
+            var latestCase = allBlotters
+                .Where(b => b.CaseId.EndsWith($"-{year}"))
+                .OrderByDescending(b => b.CreatedAt)
+                .FirstOrDefault();
+
+            if (latestCase != null)
+            {
+                string[] parts = latestCase.CaseId.Split('-');
+                if (int.TryParse(parts[0], out int lastNumber))
+                {
+                    nextNumber = lastNumber + 1;
+                }
+            }
+
+            return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
+        }
     }
 }

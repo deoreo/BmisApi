@@ -1,7 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Incident
 {
     public record GetIncidentResponse
-        (int Id, int CaseId, DateOnly Date, string ComplainantName, string Nature, string Narrative, string? PicturePath, DateTime CreatedAt)
+        (int Id, string CaseId, DateOnly Date, string ComplainantName, string Nature, string Narrative, string? PicturePath, DateTime CreatedAt)
     {
     }
 }

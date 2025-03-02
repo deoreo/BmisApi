@@ -47,7 +47,7 @@ namespace BmisApi.Services.IncidentService
             var incident = new Incident
             {
                 Date = request.Date,
-                CaseId = request.CaseId,
+                CaseId = await GenerateCaseIdAsync(),
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 Nature = request.Nature,
@@ -96,7 +96,6 @@ namespace BmisApi.Services.IncidentService
             }
 
             incident.Date = request.Date;
-            incident.CaseId = request.CaseId;
             incident.ComplainantId = request.ComplainantId;
             incident.Complainant = newComplainant;
             incident.Nature = request.Nature;
@@ -182,6 +181,30 @@ namespace BmisApi.Services.IncidentService
                 incident.PicturePath = null;
                 await _incidentRepository.UpdateAsync(incident);
             }
+        }
+
+        private async Task<string> GenerateCaseIdAsync()
+        {
+            int year = DateTime.UtcNow.Year % 100; // Get last two digits of the year
+            int nextNumber = 1;
+
+            var allBlotters = await _incidentRepository.GetAllAsync();
+
+            var latestCase = allBlotters
+                .Where(b => b.CaseId.EndsWith($"-{year}"))
+                .OrderByDescending(b => b.CreatedAt)
+                .FirstOrDefault();
+
+            if (latestCase != null)
+            {
+                string[] parts = latestCase.CaseId.Split('-');
+                if (int.TryParse(parts[0], out int lastNumber))
+                {
+                    nextNumber = lastNumber + 1;
+                }
+            }
+
+            return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
         }
 
     }

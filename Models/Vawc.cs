@@ -5,7 +5,7 @@
         public int Id { get; set; }
 
         // Details
-        public int CaseId { get; set; }
+        public string CaseId { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
         public int ComplainantId { get; set; }
         public required Resident Complainant { get; set; }

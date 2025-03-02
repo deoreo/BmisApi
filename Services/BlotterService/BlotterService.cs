@@ -59,7 +59,7 @@ namespace BmisApi.Services.BlotterService
             var blotter = new Blotter
             {
                 Date = request.Date,
-                CaseId = request.CaseId,
+                CaseId = await GenerateCaseIdAsync(),
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 DefendantId = request.DefendantId,
@@ -114,7 +114,6 @@ namespace BmisApi.Services.BlotterService
             }
 
             blotter.Date = request.Date;
-            blotter.CaseId = request.CaseId;
             blotter.ComplainantId = request.ComplainantId;
             blotter.Complainant = newComplainant;
             blotter.DefendantId = request.DefendantId;
@@ -181,6 +180,28 @@ namespace BmisApi.Services.BlotterService
             return response;
         }
 
+        private async Task<string> GenerateCaseIdAsync()
+        {
+            int year = DateTime.UtcNow.Year % 100; // Get last two digits of the year
+            int nextNumber = 1;
 
+            var allBlotters = await _blotterRepository.GetAllAsync();
+
+            var latestCase = allBlotters
+                .Where(b => b.CaseId.EndsWith($"-{year}"))
+                .OrderByDescending(b => b.CreatedAt) 
+                .FirstOrDefault();
+
+            if (latestCase != null)
+            {
+                string[] parts = latestCase.CaseId.Split('-');
+                if (int.TryParse(parts[0], out int lastNumber))
+                {
+                    nextNumber = lastNumber + 1;
+                }
+            }
+
+            return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
+        }
     }
 }
