@@ -65,6 +65,7 @@ namespace BmisApi.Services.NarrativeService
         {
             var response = new GetNarrativeResponse
                 (
+                entity.Id,
                 entity.ReportId,
                 entity.Status,
                 entity.NarrativeReport,

@@ -2,6 +2,7 @@
 {
     public record GetNarrativeResponse
         (
+        int Id,
         int ReportId,
         string Status,
         string NarrativeReport,
