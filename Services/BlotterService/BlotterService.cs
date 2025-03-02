@@ -152,6 +152,7 @@ namespace BmisApi.Services.BlotterService
                 .OrderBy(n => n.CreatedAt)
                 .Select(narratives => new GetNarrativeResponse
                 (
+                    narratives.Id,
                     narratives.ReportId,
                     narratives.Status,
                     narratives.NarrativeReport,

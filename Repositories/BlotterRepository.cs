@@ -37,6 +37,10 @@ namespace BmisApi.Repositories
             if (blotter is not  null)
             {
                 blotter.DeletedAt = DateTime.UtcNow;
+                foreach (var narrative in blotter.NarrativeReports)
+                {
+                    narrative.DeletedAt = DateTime.UtcNow;
+                }
                 await _context.SaveChangesAsync();
             }
         }
