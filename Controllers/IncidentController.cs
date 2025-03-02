@@ -8,6 +8,7 @@ using BmisApi.Models.DTOs.Incident;
 using BmisApi.Logging;
 using static BmisApi.Services.PictureService;
 using Microsoft.AspNetCore.Authorization;
+using BmisApi.Models.DTOs.Narrative;
 
 namespace BmisApi.Controllers
 {
@@ -134,6 +135,20 @@ namespace BmisApi.Controllers
             {
                 return StatusCode(500, "Error deleting picture");
             }
+        }
+
+        [HttpGet]
+        [Route("get-narratives")]
+        [NoAuditLog]
+        public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
+        {
+            var response = await _service.GetNarrativesAsync(id);
+            if (response == null)
+            {
+                return BadRequest("Failed to get narratives");
+            }
+
+            return Ok(response);
         }
 
         [HttpPost]

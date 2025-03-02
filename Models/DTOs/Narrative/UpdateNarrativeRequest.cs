@@ -2,7 +2,6 @@
 {
     public record UpdateNarrativeRequest
         (
-        int ReportId,
         string Status,
         string NarrativeReport,
         DateOnly Date

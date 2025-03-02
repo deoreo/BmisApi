@@ -18,6 +18,7 @@ namespace BmisApi.Repositories
             return await _context.Vawcs
                 .Include(b => b.Complainant)
                 .Include(b => b.Defendant)
+                .Include(b => b.NarrativeReports)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
         public async Task<Vawc> CreateAsync(Vawc entity)
@@ -36,6 +37,10 @@ namespace BmisApi.Repositories
             if (vawc is not null)
             {
                 vawc.DeletedAt = DateTime.UtcNow;
+                foreach (var narrative in vawc.NarrativeReports)
+                {
+                    narrative.DeletedAt = DateTime.UtcNow;
+                }
                 await _context.SaveChangesAsync();
             }
         }

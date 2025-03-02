@@ -98,7 +98,7 @@ namespace BmisApi.Data
 
                 entity.HasMany(b => b.NarrativeReports)
                        .WithOne()
-                       .HasForeignKey(n => n.ReportId);
+                       .HasForeignKey(n => n.BlotterId);
 
                 entity.ToTable("blotters");
 
@@ -165,6 +165,10 @@ namespace BmisApi.Data
                       .WithMany()
                       .HasForeignKey(i => i.ComplainantId);
 
+                entity.HasMany(i => i.NarrativeReports)
+                       .WithOne()
+                       .HasForeignKey(n => n.IncidentId);
+
                 entity.ToTable("incidents");
 
                 entity.Property(e => e.Id).IsRequired();
@@ -172,7 +176,6 @@ namespace BmisApi.Data
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
-                entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.PicturePath);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
@@ -192,6 +195,10 @@ namespace BmisApi.Data
                       .WithMany()
                       .HasForeignKey(b => b.DefendantId);
 
+                entity.HasMany(b => b.NarrativeReports)
+                       .WithOne()
+                       .HasForeignKey(n => n.VawcId);
+
                 entity.ToTable("vawc");
 
                 entity.Property(e => e.Id).IsRequired();
@@ -201,7 +208,6 @@ namespace BmisApi.Data
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
                 entity.Property(e => e.Status).IsRequired();
-                entity.Property(e => e.Narrative).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
@@ -228,7 +234,7 @@ namespace BmisApi.Data
                 entity.ToTable("narratives");
 
                 entity.Property(e => e.Id).IsRequired();
-                entity.Property(e => e.ReportId).IsRequired();
+                entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.NarrativeReport).IsRequired();
                 entity.Property(e => e.Date).IsRequired();

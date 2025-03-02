@@ -52,8 +52,6 @@ namespace BmisApi.Services.BlotterService
                 throw new Exception("Invalid date");
             }
 
-            
-
             var narratives = new List<Narrative> {  };
 
             var blotter = new Blotter
@@ -72,7 +70,8 @@ namespace BmisApi.Services.BlotterService
 
             var narrative = new Narrative
             {
-                ReportId = blotter.Id,
+                CaseId = blotter.CaseId,
+                BlotterId = blotter.Id,
                 Status = request.Status,
                 NarrativeReport = request.Narrative,
                 Date = request.Date,
@@ -101,19 +100,12 @@ namespace BmisApi.Services.BlotterService
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
-            var dateNow = DateOnly.FromDateTime(DateTime.Today);
-            if (request.Date >= dateNow)
-            {
-                throw new Exception("Invalid date");
-            }
-
             var blotter = await _blotterRepository.GetByIdAsync(id);
             if (blotter == null)
             {
                 throw new KeyNotFoundException($"Blotter with ID {id} not found");
             }
 
-            blotter.Date = request.Date;
             blotter.ComplainantId = request.ComplainantId;
             blotter.Complainant = newComplainant;
             blotter.DefendantId = request.DefendantId;
@@ -153,7 +145,8 @@ namespace BmisApi.Services.BlotterService
                 .Select(narratives => new GetNarrativeResponse
                 (
                     narratives.Id,
-                    narratives.ReportId,
+                    narratives.CaseId,
+                    narratives.BlotterId,
                     narratives.Status,
                     narratives.NarrativeReport,
                     narratives.Date,

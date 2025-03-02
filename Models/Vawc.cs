@@ -13,7 +13,7 @@
         public required Resident Defendant { get; set; }
         public string Nature { get; set; } = string.Empty;
         public string Status { get; set; }
-        public string Narrative { get; set; } = string.Empty;
+        public required ICollection<Narrative> NarrativeReports { get; set; }
 
         // Crud ops
         public DateTime CreatedAt { get; set; }

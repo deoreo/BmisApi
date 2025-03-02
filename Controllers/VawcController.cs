@@ -1,6 +1,7 @@
 ﻿using BmisApi.Logging;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Incident;
+using BmisApi.Models.DTOs.Narrative;
 using BmisApi.Services.IncidentService;
 using BmisApi.Services.VawcService;
 using Microsoft.AspNetCore.Authorization;
@@ -83,6 +84,20 @@ namespace BmisApi.Controllers
             if (response == null)
             {
                 return BadRequest("Failed to get VAWC");
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-narratives")]
+        [NoAuditLog]
+        public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
+        {
+            var response = await _service.GetNarrativesAsync(id);
+            if (response == null)
+            {
+                return BadRequest("Failed to get narratives");
             }
 
             return Ok(response);

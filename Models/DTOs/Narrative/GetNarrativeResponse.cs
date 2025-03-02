@@ -3,7 +3,8 @@
     public record GetNarrativeResponse
         (
         int Id,
-        int ReportId,
+        string CaseId,
+        int? ReportId,
         string Status,
         string NarrativeReport,
         DateOnly Date,

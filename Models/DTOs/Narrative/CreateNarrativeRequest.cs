@@ -2,7 +2,9 @@
 {
     public record CreateNarrativeRequest
         (
-        int ReportId,
+        int? BlotterId,
+        int? IncidentId,
+        int? VawcId,
         string Status,
         string NarrativeReport,
         DateOnly Date

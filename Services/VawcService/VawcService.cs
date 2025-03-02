@@ -1,5 +1,6 @@
 ﻿using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
+using BmisApi.Models.DTOs.Narrative;
 using BmisApi.Repositories;
 
 namespace BmisApi.Services.VawcService
@@ -8,11 +9,13 @@ namespace BmisApi.Services.VawcService
     {
         private readonly ICrudRepository<Vawc> _vawcRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
+        private readonly ICrudRepository<Narrative> _narrativeRepository;
 
-        public VawcService(ICrudRepository<Vawc> vawcRepository, ICrudRepository<Resident> residentRepository)
+        public VawcService(ICrudRepository<Vawc> vawcRepository, ICrudRepository<Resident> residentRepository, ICrudRepository<Narrative> narrativeRepository)
         {
             _vawcRepository = vawcRepository;
             _residentRepository = residentRepository;
+            _narrativeRepository = narrativeRepository;
         }
 
         public async Task<GetVawcResponse?> GetByIdAsync(int id)
@@ -34,7 +37,7 @@ namespace BmisApi.Services.VawcService
             }
 
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
-            if (request.Date >= dateNow)
+            if (request.Date > dateNow)
             {
                 throw new Exception("Invalid date");
             }
@@ -44,6 +47,8 @@ namespace BmisApi.Services.VawcService
             {
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
+
+            var narratives = new List<Narrative> { };
 
             var vawc = new Vawc
             {
@@ -55,10 +60,19 @@ namespace BmisApi.Services.VawcService
                 Defendant = defendant,
                 Nature = request.Nature,
                 Status = request.Status,
-                Narrative = request.Narrative
+                NarrativeReports = narratives
             };
-
             vawc = await _vawcRepository.CreateAsync(vawc);
+
+            var narrative = new Narrative
+            {
+                CaseId = vawc.CaseId,
+                VawcId = vawc.Id,
+                Status = request.Status,
+                NarrativeReport = request.Narrative,
+                Date = request.Date,
+            };
+            await _narrativeRepository.CreateAsync(narrative);
 
             return SetResponse(vawc);
         }
@@ -82,26 +96,17 @@ namespace BmisApi.Services.VawcService
                 throw new KeyNotFoundException($"Provided defendant resident with id {request.DefendantId} not found.");
             }
 
-            var dateNow = DateOnly.FromDateTime(DateTime.Today);
-            if (request.Date >= dateNow)
-            {
-                throw new Exception("Invalid date");
-            }
-
             var vawc = await _vawcRepository.GetByIdAsync(id);
             if (vawc == null)
             {
                 throw new KeyNotFoundException($"VAWC with ID {id} not found");
             }
 
-            vawc.Date = request.Date;
             vawc.ComplainantId = request.ComplainantId;
             vawc.Complainant = newComplainant;
             vawc.DefendantId = request.DefendantId;
             vawc.Defendant = newDefendant;
             vawc.Nature = request.Nature;
-            vawc.Status = request.Status;
-            vawc.Narrative = request.Narrative;
             vawc.LastUpdatedAt = DateTime.UtcNow;
 
             await _vawcRepository.UpdateAsync(vawc);
@@ -134,7 +139,6 @@ namespace BmisApi.Services.VawcService
                 vawc.Defendant.FullName,
                 vawc.Nature,
                 vawc.Status,
-                vawc.Narrative,
                 vawc.CreatedAt
                 );
 
@@ -163,6 +167,31 @@ namespace BmisApi.Services.VawcService
             }
 
             return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
+        }
+
+        public async Task<GetAllNarrativeResponse> GetNarrativesAsync(int id)
+        {
+            var vawc = await _vawcRepository.GetByIdAsync(id);
+            if (vawc == null)
+            {
+                throw new KeyNotFoundException($"Provided vawc with id {id} not found");
+            }
+
+            var narratives = vawc.NarrativeReports
+                .OrderBy(n => n.CreatedAt)
+                .Select(narratives => new GetNarrativeResponse
+                (
+                    narratives.Id,
+                    narratives.CaseId,
+                    narratives.VawcId,
+                    narratives.Status,
+                    narratives.NarrativeReport,
+                    narratives.Date,
+                    narratives.CreatedAt
+                ))
+                .ToList();
+
+            return new GetAllNarrativeResponse(narratives);
         }
     }
 }
