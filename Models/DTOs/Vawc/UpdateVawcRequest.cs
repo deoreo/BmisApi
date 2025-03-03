@@ -1,7 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Blotter
 {
     public record UpdateVawcRequest
-        (int ComplainantId, int DefendantId, string Nature)
+        (string Complainant, string? ContactInfo, int DefendantId, string Nature)
     {
     }
 }

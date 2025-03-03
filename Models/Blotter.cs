@@ -7,8 +7,8 @@
         // Details
         public string CaseId { get; set; } = string.Empty;
         public DateOnly Date {  get; set; }
-        public int ComplainantId { get; set; }
-        public required Resident Complainant { get; set; }
+        public string Complainant { get; set; } = string.Empty;
+        public string? ContactInfo { get; set; }
         public int DefendantId { get; set; }
         public required Resident Defendant { get; set; }
         public string Nature { get; set; } = string.Empty;

@@ -88,10 +88,6 @@ namespace BmisApi.Data
             {
                 entity.HasKey(e => e.Id).HasName("blotter_pkeys");
 
-                entity.HasOne(b => b.Complainant)
-                      .WithMany()
-                      .HasForeignKey(b => b.ComplainantId);
-
                 entity.HasOne(b => b.Defendant)
                       .WithMany()
                       .HasForeignKey(b => b.DefendantId);
@@ -105,7 +101,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
-                entity.Property(e => e.ComplainantId).IsRequired();
+                entity.Property(e => e.Complainant).IsRequired();
+                entity.Property(e => e.ContactInfo);
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
                 entity.Property(e => e.Status).IsRequired();
@@ -184,10 +181,6 @@ namespace BmisApi.Data
             {
                 entity.HasKey(e => e.Id).HasName("vawc_pkeys");
 
-                entity.HasOne(b => b.Complainant)
-                      .WithMany()
-                      .HasForeignKey(b => b.ComplainantId);
-
                 entity.HasOne(b => b.Defendant)
                       .WithMany()
                       .HasForeignKey(b => b.DefendantId);
@@ -201,7 +194,8 @@ namespace BmisApi.Data
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
-                entity.Property(e => e.ComplainantId).IsRequired();
+                entity.Property(e => e.Complainant).IsRequired();
+                entity.Property(e => e.ContactInfo).IsRequired();
                 entity.Property(e => e.DefendantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
                 entity.Property(e => e.Status).IsRequired();

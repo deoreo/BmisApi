@@ -30,12 +30,6 @@ namespace BmisApi.Services.VawcService
         }
         public async Task<GetVawcResponse> CreateAsync(CreateVawcRequest request)
         {
-            var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (complainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
             if (request.Date > dateNow)
             {
@@ -54,8 +48,8 @@ namespace BmisApi.Services.VawcService
             {
                 Date = request.Date,
                 CaseId = await GenerateCaseIdAsync(),
-                ComplainantId = request.ComplainantId,
-                Complainant = complainant,
+                Complainant = request.Complainant,
+                ContactInfo = request.ContactInfo,
                 DefendantId = request.DefendantId,
                 Defendant = defendant,
                 Nature = request.Nature,
@@ -84,12 +78,6 @@ namespace BmisApi.Services.VawcService
 
         public async Task<GetVawcResponse?> UpdateAsync(UpdateVawcRequest request, int id)
         {
-            var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (newComplainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var newDefendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (newDefendant == null)
             {
@@ -102,8 +90,9 @@ namespace BmisApi.Services.VawcService
                 throw new KeyNotFoundException($"VAWC with ID {id} not found");
             }
 
-            vawc.ComplainantId = request.ComplainantId;
-            vawc.Complainant = newComplainant;
+            vawc.Complainant = request.Complainant;
+            vawc.ContactInfo = request.ContactInfo;
+            vawc.Complainant = request.Complainant;
             vawc.DefendantId = request.DefendantId;
             vawc.Defendant = newDefendant;
             vawc.Nature = request.Nature;
@@ -135,7 +124,8 @@ namespace BmisApi.Services.VawcService
                 vawc.Id,
                 vawc.CaseId,
                 vawc.Date,
-                vawc.Complainant.FullName,
+                vawc.Complainant,
+                vawc.ContactInfo,
                 vawc.Defendant.FullName,
                 vawc.Nature,
                 vawc.Status,

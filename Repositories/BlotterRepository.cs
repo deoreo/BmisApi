@@ -16,7 +16,6 @@ namespace BmisApi.Repositories
         public async Task<Blotter?> GetByIdAsync(int id)
         {
             return await _context.Blotters
-                .Include(b => b.Complainant)
                 .Include(b => b.Defendant)
                 .Include(b => b.NarrativeReports)
                 .FirstOrDefaultAsync(b => b.Id == id);
@@ -54,7 +53,6 @@ namespace BmisApi.Repositories
         public async Task<List<Blotter>> GetAllAsync()
         {
             return await _context.Blotters.AsNoTracking()
-                .Include(b => b.Complainant)
                 .Include(b => b.Defendant)
                 .ToListAsync();
         }
@@ -69,7 +67,6 @@ namespace BmisApi.Repositories
             var validIds = ids.Where(id => id > 0).ToList();
 
             var blotters = await _context.Blotters
-                .Include(r => r.Complainant)
                 .Include(r => r.Defendant)
                 .Where(r => ids.Contains(r.Id))
                 .ToListAsync();

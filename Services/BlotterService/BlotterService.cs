@@ -34,12 +34,6 @@ namespace BmisApi.Services.BlotterService
 
         public async Task<GetBlotterResponse> CreateAsync(CreateBlotterRequest request)
         {
-            var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (complainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var defendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (defendant == null)
             {
@@ -58,8 +52,8 @@ namespace BmisApi.Services.BlotterService
             {
                 Date = request.Date,
                 CaseId = await GenerateCaseIdAsync(),
-                ComplainantId = request.ComplainantId,
-                Complainant = complainant,
+                Complainant = request.Complainant,
+                ContactInfo = request.ContactInfo,
                 DefendantId = request.DefendantId,
                 Defendant = defendant,
                 Nature = request.Nature,
@@ -88,12 +82,6 @@ namespace BmisApi.Services.BlotterService
 
         public async Task<GetBlotterResponse?> UpdateAsync(UpdateBlotterRequest request, int id)
         {
-            var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (newComplainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var newDefendant = await _residentRepository.GetByIdAsync(request.DefendantId);
             if (newDefendant == null)
             {
@@ -106,8 +94,8 @@ namespace BmisApi.Services.BlotterService
                 throw new KeyNotFoundException($"Blotter with ID {id} not found");
             }
 
-            blotter.ComplainantId = request.ComplainantId;
-            blotter.Complainant = newComplainant;
+            blotter.Complainant = request.Complainant;
+            blotter.ContactInfo = request.ContactInfo;
             blotter.DefendantId = request.DefendantId;
             blotter.Defendant = newDefendant;
             blotter.Nature = request.Nature;
@@ -164,7 +152,8 @@ namespace BmisApi.Services.BlotterService
                 blotter.Id,
                 blotter.CaseId,
                 blotter.Date,
-                blotter.Complainant.FullName,
+                blotter.Complainant,
+                blotter.ContactInfo ?? "N/A",
                 blotter.Defendant.FullName,
                 blotter.Nature,
                 blotter.Status,
