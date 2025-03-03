@@ -2,6 +2,7 @@
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Narrative;
 using BmisApi.Repositories;
+using System.Globalization;
 
 namespace BmisApi.Services.VawcService
 {
@@ -48,11 +49,11 @@ namespace BmisApi.Services.VawcService
             {
                 Date = request.Date,
                 CaseId = await GenerateCaseIdAsync(),
-                Complainant = request.Complainant,
-                ContactInfo = request.ContactInfo,
+                Complainant = ToTitleCase(request.Complainant).Trim(),
+                ContactInfo = request.ContactInfo?.Trim(),
                 DefendantId = request.DefendantId,
                 Defendant = defendant,
-                Nature = request.Nature,
+                Nature = ToTitleCase(request.Nature).Trim(),
                 Status = request.Status,
                 NarrativeReports = narratives
             };
@@ -90,12 +91,12 @@ namespace BmisApi.Services.VawcService
                 throw new KeyNotFoundException($"VAWC with ID {id} not found");
             }
 
-            vawc.Complainant = request.Complainant;
-            vawc.ContactInfo = request.ContactInfo;
+            vawc.Complainant = ToTitleCase(request.Complainant).Trim();
+            vawc.ContactInfo = request.ContactInfo?.Trim();
             vawc.Complainant = request.Complainant;
             vawc.DefendantId = request.DefendantId;
             vawc.Defendant = newDefendant;
-            vawc.Nature = request.Nature;
+            vawc.Nature = ToTitleCase(request.Nature).Trim();
             vawc.LastUpdatedAt = DateTime.UtcNow;
 
             await _vawcRepository.UpdateAsync(vawc);
@@ -182,6 +183,15 @@ namespace BmisApi.Services.VawcService
                 .ToList();
 
             return new GetAllNarrativeResponse(narratives);
+        }
+
+        public static string ToTitleCase(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(input.ToLower());
         }
     }
 }

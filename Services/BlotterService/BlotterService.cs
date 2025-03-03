@@ -2,6 +2,7 @@
 using BmisApi.Models;
 using BmisApi.Repositories;
 using BmisApi.Models.DTOs.Narrative;
+using System.Globalization;
 
 namespace BmisApi.Services.BlotterService
 {
@@ -52,11 +53,11 @@ namespace BmisApi.Services.BlotterService
             {
                 Date = request.Date,
                 CaseId = await GenerateCaseIdAsync(),
-                Complainant = request.Complainant,
-                ContactInfo = request.ContactInfo,
+                Complainant = ToTitleCase(request.Complainant).Trim(),
+                ContactInfo = request.ContactInfo?.Trim(),
                 DefendantId = request.DefendantId,
                 Defendant = defendant,
-                Nature = request.Nature,
+                Nature = ToTitleCase(request.Nature),
                 Status = request.Status,
                 NarrativeReports = narratives
             };
@@ -94,11 +95,11 @@ namespace BmisApi.Services.BlotterService
                 throw new KeyNotFoundException($"Blotter with ID {id} not found");
             }
 
-            blotter.Complainant = request.Complainant;
-            blotter.ContactInfo = request.ContactInfo;
+            blotter.Complainant = ToTitleCase(request.Complainant).Trim();
+            blotter.ContactInfo = request.ContactInfo?.Trim();
             blotter.DefendantId = request.DefendantId;
             blotter.Defendant = newDefendant;
-            blotter.Nature = request.Nature;
+            blotter.Nature = ToTitleCase(request.Nature);
             blotter.LastUpdatedAt = DateTime.UtcNow;
 
             await _blotterRepository.UpdateAsync(blotter);
@@ -185,6 +186,15 @@ namespace BmisApi.Services.BlotterService
             }
 
             return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
+        }
+
+        public static string ToTitleCase(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(input.ToLower());
         }
     }
 }

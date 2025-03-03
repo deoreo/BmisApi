@@ -1,6 +1,7 @@
 ﻿using BmisApi.Models;
 using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Repositories;
+using System.Globalization;
 
 namespace BmisApi.Services.OfficialService
 {
@@ -66,7 +67,7 @@ namespace BmisApi.Services.OfficialService
             var official = new Official
             {
                 Position = request.Position,
-                Title = request.Title,
+                Title = ToTitleCase(request.Title).Trim(),
                 ResidentId = request.ResidentId,
                 Resident = resident,
                 TermStart = request.TermStart,
@@ -127,7 +128,7 @@ namespace BmisApi.Services.OfficialService
             }
 
             official.Position = request.Position;
-            official.Title = request.Title;
+            official.Title = ToTitleCase(request.Title).Trim();
             official.ResidentId = request.ResidentId;
             official.Resident = newResident;
             official.TermStart = request.TermStart;
@@ -170,6 +171,15 @@ namespace BmisApi.Services.OfficialService
                 );
 
             return response;
+        }
+
+        public static string ToTitleCase(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(input.ToLower());
         }
     }
 }

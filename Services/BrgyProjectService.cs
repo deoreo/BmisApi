@@ -28,13 +28,13 @@ namespace BmisApi.Services
         {
             var brgyProject = new BrgyProject()
             {
-                ReferenceCode = request.ReferenceCode,
+                ReferenceCode = request.ReferenceCode.Trim(),
                 ProjectDescription = request.ProjectDescription,
-                ImplementingAgency = request.ImplementingAgency,
+                ImplementingAgency = request.ImplementingAgency.Trim(),
                 StartingDate = request.StartingDate,
                 CompletionDate = request.CompletionDate,
                 ExpectedOutput = request.ExpectedOutput,
-                FundingSource = request.FundingSource,
+                FundingSource = request.FundingSource.Trim(),
                 PS = request.PS ?? 0m,
                 MOE = request.MOE ?? 0m,
                 CO = request.CO ?? 0m
@@ -58,13 +58,13 @@ namespace BmisApi.Services
                 throw new KeyNotFoundException($"Project with ID {id} not found");
             }
 
-            brgyProject.ReferenceCode = request.ReferenceCode;
+            brgyProject.ReferenceCode = request.ReferenceCode.Trim();
             brgyProject.ProjectDescription = request.ProjectDescription;
-            brgyProject.ImplementingAgency = request.ImplementingAgency;
+            brgyProject.ImplementingAgency = request.ImplementingAgency.Trim();
             brgyProject.StartingDate = request.StartingDate;
             brgyProject.CompletionDate = request.CompletionDate;
             brgyProject.ExpectedOutput = request.ExpectedOutput;
-            brgyProject.FundingSource = request.FundingSource;
+            brgyProject.FundingSource = request.FundingSource.Trim();
             brgyProject.PS = request.PS ?? 0m;
             brgyProject.MOE = request.MOE ?? 0m;
             brgyProject.CO = request.CO ?? 0m;

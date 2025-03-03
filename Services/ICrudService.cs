@@ -1,4 +1,6 @@
-﻿namespace BmisApi.Services
+﻿using System.Globalization;
+
+namespace BmisApi.Services
 {
     public interface ICrudService<TEntity, TGet,TGetAll, TCreate, TUpdate>
     {

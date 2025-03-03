@@ -187,7 +187,7 @@ namespace BmisApi.Services.ResidentService.ResidentService
             }
         }
 
-        public static string ToTitleCase(string input)
+        private static string ToTitleCase(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;
