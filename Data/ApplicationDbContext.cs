@@ -4,6 +4,8 @@ using BmisApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.Json;
 
 namespace BmisApi.Data
 {
@@ -19,9 +21,11 @@ namespace BmisApi.Data
         public DbSet<BrgyProject> BrgyProjects { get; set; }
         public DbSet<Official> Officials { get; set; }
         public DbSet<Incident> Incidents { get; set; }
+        public DbSet<IncidentComplainant> IncidentComplainants { get; set; }
         public DbSet<Vawc> Vawcs { get; set; }
         public DbSet<AuditLogModel> AuditLogs { get; set; }
         public DbSet<Narrative> Narratives { get; set; }
+        public DbSet<Justice> Justices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -158,21 +162,34 @@ namespace BmisApi.Data
             {
                 entity.HasKey(e => e.Id).HasName("incident_pkeys");
 
-                entity.HasOne(i => i.Complainant)
-                      .WithMany()
-                      .HasForeignKey(i => i.ComplainantId);
-
                 entity.ToTable("incidents");
+
+                entity.HasMany(e => e.Complainants)
+                   .WithOne()
+                   .HasForeignKey(c => c.IncidentId);
 
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
-                entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
                 entity.Property(e => e.NarrativeReport).IsRequired();
                 entity.Property(e => e.PicturePath);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<IncidentComplainant>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("incidentcomplainant_pkeys");
+
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.ContactInfo);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.ToTable("incidentcomplainants");
 
                 entity.HasQueryFilter(x => x.DeletedAt == null);
             });
@@ -229,6 +246,34 @@ namespace BmisApi.Data
                 entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.NarrativeReport).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
+
+                entity.HasQueryFilter(x => x.DeletedAt == null);
+            });
+
+            modelBuilder.Entity<Justice>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("justice_pkeys");
+
+                entity.HasOne(b => b.Defendant)
+                      .WithMany()
+                      .HasForeignKey(b => b.DefendantId);
+
+                entity.HasMany(b => b.NarrativeReports)
+                       .WithOne()
+                       .HasForeignKey(n => n.JusticeId);
+
+                entity.ToTable("justice");
+
+                entity.Property(e => e.Id).IsRequired();
+                entity.Property(e => e.CaseId).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+                entity.Property(e => e.Complainant).IsRequired();
+                entity.Property(e => e.ContactInfo);
+                entity.Property(e => e.DefendantId).IsRequired();
+                entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 

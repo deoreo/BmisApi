@@ -3,6 +3,7 @@ using System;
 using BmisApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BmisApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250303120124_IncidentNowHasManyComplainants")]
+    partial class IncidentNowHasManyComplainants
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -340,56 +343,6 @@ namespace BmisApi.Migrations
                     b.ToTable("incidentcomplainants", (string)null);
                 });
 
-            modelBuilder.Entity("BmisApi.Models.Justice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CaseId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Complainant")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContactInfo")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<int>("DefendantId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Nature")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id")
-                        .HasName("justice_pkeys");
-
-                    b.HasIndex("DefendantId");
-
-                    b.ToTable("justice", (string)null);
-                });
-
             modelBuilder.Entity("BmisApi.Models.Narrative", b =>
                 {
                     b.Property<int>("Id")
@@ -414,9 +367,6 @@ namespace BmisApi.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("JusticeId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -434,8 +384,6 @@ namespace BmisApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BlotterId");
-
-                    b.HasIndex("JusticeId");
 
                     b.HasIndex("VawcId");
 
@@ -750,26 +698,11 @@ namespace BmisApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BmisApi.Models.Justice", b =>
-                {
-                    b.HasOne("BmisApi.Models.Resident", "Defendant")
-                        .WithMany()
-                        .HasForeignKey("DefendantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Defendant");
-                });
-
             modelBuilder.Entity("BmisApi.Models.Narrative", b =>
                 {
                     b.HasOne("BmisApi.Models.Blotter", null)
                         .WithMany("NarrativeReports")
                         .HasForeignKey("BlotterId");
-
-                    b.HasOne("BmisApi.Models.Justice", null)
-                        .WithMany("NarrativeReports")
-                        .HasForeignKey("JusticeId");
 
                     b.HasOne("BmisApi.Models.Vawc", null)
                         .WithMany("NarrativeReports")
@@ -871,11 +804,6 @@ namespace BmisApi.Migrations
             modelBuilder.Entity("BmisApi.Models.Incident", b =>
                 {
                     b.Navigation("Complainants");
-                });
-
-            modelBuilder.Entity("BmisApi.Models.Justice", b =>
-                {
-                    b.Navigation("NarrativeReports");
                 });
 
             modelBuilder.Entity("BmisApi.Models.Vawc", b =>

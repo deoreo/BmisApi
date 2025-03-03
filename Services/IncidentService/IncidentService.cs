@@ -35,12 +35,6 @@ namespace BmisApi.Services.IncidentService
         }
         public async Task<GetIncidentResponse> CreateAsync(CreateIncidentRequest request)
         {
-            var complainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (complainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
             if (request.Date > dateNow)
             {
@@ -51,8 +45,7 @@ namespace BmisApi.Services.IncidentService
             {
                 Date = request.Date,
                 CaseId = await GenerateCaseIdAsync(),
-                ComplainantId = request.ComplainantId,
-                Complainant = complainant,
+                Complainants = request.Complainants,
                 Nature = request.Nature,
                 NarrativeReport = request.Narrative,
             };
@@ -79,20 +72,13 @@ namespace BmisApi.Services.IncidentService
 
         public async Task<GetIncidentResponse?> UpdateAsync(UpdateIncidentRequest request, int id)
         {
-            var newComplainant = await _residentRepository.GetByIdAsync(request.ComplainantId);
-            if (newComplainant == null)
-            {
-                throw new KeyNotFoundException($"Provided complainant resident with id {request.ComplainantId} not found");
-            }
-
             var incident = await _incidentRepository.GetByIdAsync(id);
             if (incident == null)
             {
                 throw new KeyNotFoundException($"Incident with ID {id} not found");
             }
 
-            incident.ComplainantId = request.ComplainantId;
-            incident.Complainant = newComplainant;
+            incident.Complainants = request.Complainants;
             incident.Nature = request.Nature;
             incident.LastUpdatedAt = DateTime.UtcNow;
             incident.NarrativeReport = request.Narrative;
@@ -123,7 +109,7 @@ namespace BmisApi.Services.IncidentService
                 incident.Id,
                 incident.CaseId,
                 incident.Date,
-                incident.Complainant.FullName,
+                incident.Complainants,
                 incident.Nature,
                 incident.NarrativeReport,
                 incident.PicturePath,

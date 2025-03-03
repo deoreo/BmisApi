@@ -16,7 +16,7 @@ namespace BmisApi.Repositories
         public async Task<Incident?> GetByIdAsync(int id)
         {
             return await _context.Incidents
-                .Include(i => i.Complainant)
+                .Include(i => i.Complainants)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
@@ -49,11 +49,8 @@ namespace BmisApi.Repositories
         public async Task<List<Incident>> GetAllAsync()
         {
             return await _context.Incidents.AsNoTracking()
-                .Include(i => i.Complainant)
                 .ToListAsync();
         }
-
-       
 
         public async Task<List<Incident>> GetManyByIdAsync(IEnumerable<int> ids)
         {
@@ -65,7 +62,6 @@ namespace BmisApi.Repositories
             var validIds = ids.Where(id => id > 0).ToList();
 
             var incidents = await _context.Incidents
-                .Include(r => r.Complainant)
                 .Where(r => ids.Contains(r.Id))
                 .ToListAsync();
 

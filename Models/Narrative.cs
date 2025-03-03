@@ -6,6 +6,7 @@
         public string CaseId { get; set; } = string.Empty;
         public int? BlotterId { get; set; }
         public int? VawcId { get; set; }
+        public int? JusticeId { get; set; }
         public string Status { get; set; } = string.Empty;
         public string NarrativeReport { get; set; } = string.Empty;
         public  DateOnly Date { get; set; }

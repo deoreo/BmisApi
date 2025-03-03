@@ -8,6 +8,7 @@ using BmisApi.Services;
 using BmisApi.Services.BlotterService;
 using BmisApi.Services.HouseholdService;
 using BmisApi.Services.IncidentService;
+using BmisApi.Services.JusticeService;
 using BmisApi.Services.NarrativeService;
 using BmisApi.Services.OfficialService;
 using BmisApi.Services.ResidentService.ResidentService;
@@ -144,6 +145,7 @@ builder.Services.AddScoped<ICrudRepository<Official>, OfficialRepository>();
 builder.Services.AddScoped<ICrudRepository<Incident>, IncidentRepository>();
 builder.Services.AddScoped<ICrudRepository<Vawc>,  VawcRepository>();
 builder.Services.AddScoped<ICrudRepository<Narrative>, NarrativeRepository>();
+builder.Services.AddScoped<ICrudRepository<Justice>, JusticeRepository>();
 
 // Services
 builder.Services.AddScoped
@@ -162,6 +164,8 @@ builder.Services.AddScoped
     <IVawcService, VawcService>();
 builder.Services.AddScoped
     <INarrativeService, NarrativeService>();
+builder.Services.AddScoped
+    <IJusticeService, JusticeService>();
 builder.Services.AddScoped
     <PictureService>();
 
