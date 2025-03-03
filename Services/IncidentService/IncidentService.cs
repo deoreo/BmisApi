@@ -12,17 +12,14 @@ namespace BmisApi.Services.IncidentService
     {
         private readonly ICrudRepository<Incident> _incidentRepository;
         private readonly ICrudRepository<Resident> _residentRepository;
-        private readonly ICrudRepository<Narrative> _narrativeRepository;
         private readonly PictureService _pictureService;
 
         public IncidentService(ICrudRepository<Incident> incidentRepository, 
             ICrudRepository<Resident> residentRepository,
-            ICrudRepository<Narrative> narrativeRepository,
             PictureService pictureService)
         {
             _incidentRepository = incidentRepository;
             _residentRepository = residentRepository;
-            _narrativeRepository = narrativeRepository;
             _pictureService = pictureService;
         }
 
@@ -50,8 +47,6 @@ namespace BmisApi.Services.IncidentService
                 throw new Exception("Invalid date");
             }
 
-            var narratives = new List<Narrative> { };
-
             var incident = new Incident
             {
                 Date = request.Date,
@@ -59,19 +54,9 @@ namespace BmisApi.Services.IncidentService
                 ComplainantId = request.ComplainantId,
                 Complainant = complainant,
                 Nature = request.Nature,
-                NarrativeReports = narratives
+                NarrativeReport = request.Narrative,
             };
             incident = await _incidentRepository.CreateAsync(incident);
-
-            var narrative = new Narrative
-            {
-                CaseId = incident.CaseId,
-                IncidentId = incident.Id,
-                Status = "N/A",
-                NarrativeReport = request.Narrative,
-                Date = request.Date,
-            };
-            await _narrativeRepository.CreateAsync(narrative);
 
             return SetResponse(incident);
         }
@@ -110,6 +95,7 @@ namespace BmisApi.Services.IncidentService
             incident.Complainant = newComplainant;
             incident.Nature = request.Nature;
             incident.LastUpdatedAt = DateTime.UtcNow;
+            incident.NarrativeReport = request.Narrative;
 
             await _incidentRepository.UpdateAsync(incident);
 
@@ -139,6 +125,7 @@ namespace BmisApi.Services.IncidentService
                 incident.Date,
                 incident.Complainant.FullName,
                 incident.Nature,
+                incident.NarrativeReport,
                 incident.PicturePath,
                 incident.CreatedAt
                 );
@@ -213,31 +200,6 @@ namespace BmisApi.Services.IncidentService
             }
 
             return $"{nextNumber:D2}-{year}"; // Format as 2-digit number with year (e.g., "01-25")
-        }
-
-        public async Task<GetAllNarrativeResponse> GetNarrativesAsync(int id)
-        {
-            var incident = await _incidentRepository.GetByIdAsync(id);
-            if (incident == null)
-            {
-                throw new KeyNotFoundException($"Provided incident with id {id} not found");
-            }
-
-            var narratives = incident.NarrativeReports
-                .OrderBy(n => n.CreatedAt)
-                .Select(narratives => new GetNarrativeResponse
-                (
-                    narratives.Id,
-                    narratives.CaseId,
-                    narratives.IncidentId,
-                    narratives.Status,
-                    narratives.NarrativeReport,
-                    narratives.Date,
-                    narratives.CreatedAt
-                ))
-                .ToList();
-
-            return new GetAllNarrativeResponse(narratives);
         }
     }
 }

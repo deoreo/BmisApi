@@ -137,20 +137,6 @@ namespace BmisApi.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("get-narratives")]
-        [NoAuditLog]
-        public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
-        {
-            var response = await _service.GetNarrativesAsync(id);
-            if (response == null)
-            {
-                return BadRequest("Failed to get narratives");
-            }
-
-            return Ok(response);
-        }
-
         [HttpPost]
         [Route("export")]
         public IActionResult ExportAsync()

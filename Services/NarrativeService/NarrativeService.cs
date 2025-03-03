@@ -8,20 +8,18 @@ namespace BmisApi.Services.NarrativeService
     {
         private readonly ICrudRepository<Narrative> _repository;
         private readonly ICrudRepository<Blotter> _blotterRepository;
-        private readonly ICrudRepository<Incident> _incidentRepository;
         private readonly ICrudRepository<Vawc> _vawcRepository;
 
-        public NarrativeService(ICrudRepository<Narrative> repository, ICrudRepository<Blotter> blotterRepository, ICrudRepository<Incident> incidentRepository, ICrudRepository<Vawc> vawcRepository)
+        public NarrativeService(ICrudRepository<Narrative> repository, ICrudRepository<Blotter> blotterRepository, ICrudRepository<Vawc> vawcRepository)
         {
             _repository = repository;
             _blotterRepository = blotterRepository;
-            _incidentRepository = incidentRepository;
             _vawcRepository = vawcRepository;
         }
 
         public async Task<GetNarrativeResponse> CreateAsync(CreateNarrativeRequest request)
         {
-            ValidateForeignKeys(request.BlotterId, request.IncidentId, request.VawcId);
+            ValidateForeignKeys(request.BlotterId, request.VawcId);
 
             var dateNow = DateOnly.FromDateTime(DateTime.Today);
             if (request.Date > dateNow)
@@ -32,7 +30,6 @@ namespace BmisApi.Services.NarrativeService
             var narrative = new Narrative()
             {
                 BlotterId = request.BlotterId,
-                IncidentId = request.IncidentId,
                 VawcId = request.VawcId,
                 Status = request.Status,
                 NarrativeReport = request.NarrativeReport,
@@ -84,10 +81,6 @@ namespace BmisApi.Services.NarrativeService
             {
                 reportId = entity.BlotterId.Value;
             }
-            else if (entity.IncidentId != null)
-            {
-                reportId = entity.IncidentId.Value;
-            }
             else if (entity.VawcId != null)
             {
                 reportId = entity.VawcId.Value;
@@ -128,15 +121,14 @@ namespace BmisApi.Services.NarrativeService
             return SetResponse(narrative);
         }
 
-        private void ValidateForeignKeys(int? blotterId, int? incidentId, int? vawcId)
+        private void ValidateForeignKeys(int? blotterId, int? vawcId)
         {
             int count = (blotterId.HasValue ? 1 : 0) +
-                        (incidentId.HasValue ? 1 : 0) +
                         (vawcId.HasValue ? 1 : 0);
 
             if (count != 1)
             {
-                throw new ArgumentException("A narrative must be associated with exactly one of Blotter, Incident, or Vawc.");
+                throw new ArgumentException("A narrative must be associated with exactly one of Blotter, or Vawc.");
             }
         }
 
@@ -158,22 +150,6 @@ namespace BmisApi.Services.NarrativeService
 
                 await _repository.UpdateAsync(narrative);
 
-            }
-            else if (request.IncidentId != null)
-            {
-                var incident = await _incidentRepository.GetByIdAsync(request.IncidentId.Value);
-                if (incident == null)
-                {
-                    throw new KeyNotFoundException($"Incident with ID {request.IncidentId} not found");
-                }
-
-                incident.Date = request.Date;
-
-                await _incidentRepository.UpdateAsync(incident);
-
-                narrative.CaseId = incident.CaseId;
-
-                await _repository.UpdateAsync(narrative);
             }
             else if (request.VawcId != null)
             {

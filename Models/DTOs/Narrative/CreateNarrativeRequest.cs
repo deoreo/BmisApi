@@ -3,7 +3,6 @@
     public record CreateNarrativeRequest
         (
         int? BlotterId,
-        int? IncidentId,
         int? VawcId,
         string Status,
         string NarrativeReport,

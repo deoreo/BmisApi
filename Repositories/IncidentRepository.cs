@@ -17,7 +17,6 @@ namespace BmisApi.Repositories
         {
             return await _context.Incidents
                 .Include(i => i.Complainant)
-                .Include(i => i.NarrativeReports)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
@@ -37,10 +36,6 @@ namespace BmisApi.Repositories
             if (incident is not null)
             {
                 incident.DeletedAt = DateTime.UtcNow;
-                foreach (var narrative in incident.NarrativeReports)
-                {
-                    narrative.DeletedAt = DateTime.UtcNow;
-                }
                 await _context.SaveChangesAsync();
             }
         }

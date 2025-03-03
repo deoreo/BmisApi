@@ -1,7 +1,7 @@
 ﻿namespace BmisApi.Models.DTOs.Incident
 {
     public record UpdateIncidentRequest
-        (int ComplainantId, string Nature)
+        (int ComplainantId, string Nature, string Narrative)
     {
     }
 }

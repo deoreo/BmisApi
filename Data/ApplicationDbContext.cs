@@ -165,10 +165,6 @@ namespace BmisApi.Data
                       .WithMany()
                       .HasForeignKey(i => i.ComplainantId);
 
-                entity.HasMany(i => i.NarrativeReports)
-                       .WithOne()
-                       .HasForeignKey(n => n.IncidentId);
-
                 entity.ToTable("incidents");
 
                 entity.Property(e => e.Id).IsRequired();
@@ -176,6 +172,7 @@ namespace BmisApi.Data
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.ComplainantId).IsRequired();
                 entity.Property(e => e.Nature).IsRequired();
+                entity.Property(e => e.NarrativeReport).IsRequired();
                 entity.Property(e => e.PicturePath);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
