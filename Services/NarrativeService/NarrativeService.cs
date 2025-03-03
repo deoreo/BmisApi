@@ -97,7 +97,7 @@ namespace BmisApi.Services.NarrativeService
             }
             else
             {
-                throw new Exception("Invalid narrative report");
+                throw new Exception($"Invalid narrative report with id {entity.Id}");
             }
 
             var response = new GetNarrativeResponse

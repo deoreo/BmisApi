@@ -65,7 +65,7 @@ namespace BmisApi.Services.JusticeService
             var narrative = new Narrative
             {
                 CaseId = justice.CaseId,
-                BlotterId = justice.Id,
+                JusticeId = justice.Id,
                 Status = request.Status,
                 NarrativeReport = request.Narrative,
                 Date = request.Date,
@@ -122,19 +122,19 @@ namespace BmisApi.Services.JusticeService
 
         public async Task<GetAllNarrativeResponse> GetNarrativesAsync(int id)
         {
-            var blotter = await _justiceRepository.GetByIdAsync(id);
-            if (blotter == null)
+            var justice = await _justiceRepository.GetByIdAsync(id);
+            if (justice == null)
             {
                 throw new KeyNotFoundException($"Provided justice with id {id} not found");
             }
 
-            var narratives = blotter.NarrativeReports
+            var narratives = justice.NarrativeReports
                 .OrderBy(n => n.CreatedAt)
                 .Select(narratives => new GetNarrativeResponse
                 (
                     narratives.Id,
                     narratives.CaseId,
-                    narratives.BlotterId,
+                    narratives.JusticeId,
                     narratives.Status,
                     narratives.NarrativeReport,
                     narratives.Date,
@@ -168,9 +168,9 @@ namespace BmisApi.Services.JusticeService
             int year = DateTime.UtcNow.Year % 100; // Get last two digits of the year
             int nextNumber = 1;
 
-            var allBlotters = await _justiceRepository.GetAllAsync();
+            var allJustices = await _justiceRepository.GetAllAsync();
 
-            var latestCase = allBlotters
+            var latestCase = allJustices
                 .Where(b => b.CaseId.EndsWith($"-{year}"))
                 .OrderByDescending(b => b.CreatedAt)
                 .FirstOrDefault();
