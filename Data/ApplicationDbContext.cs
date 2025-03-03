@@ -4,6 +4,7 @@ using BmisApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
 
@@ -21,7 +22,6 @@ namespace BmisApi.Data
         public DbSet<BrgyProject> BrgyProjects { get; set; }
         public DbSet<Official> Officials { get; set; }
         public DbSet<Incident> Incidents { get; set; }
-        public DbSet<IncidentComplainant> IncidentComplainants { get; set; }
         public DbSet<Vawc> Vawcs { get; set; }
         public DbSet<AuditLogModel> AuditLogs { get; set; }
         public DbSet<Narrative> Narratives { get; set; }
@@ -164,10 +164,6 @@ namespace BmisApi.Data
 
                 entity.ToTable("incidents");
 
-                entity.HasMany(e => e.Complainants)
-                   .WithOne()
-                   .HasForeignKey(c => c.IncidentId);
-
                 entity.Property(e => e.Id).IsRequired();
                 entity.Property(e => e.CaseId).IsRequired();
                 entity.Property(e => e.Date).IsRequired();
@@ -177,19 +173,23 @@ namespace BmisApi.Data
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DeletedAt).HasDefaultValue(null);
 
-                entity.HasQueryFilter(x => x.DeletedAt == null);
-            });
+                var jsonOptions = new JsonSerializerOptions { WriteIndented = false };
 
-            modelBuilder.Entity<IncidentComplainant>(entity =>
-            {
-                entity.HasKey(e => e.Id).HasName("incidentcomplainant_pkeys");
-
-                entity.Property(e => e.Name).IsRequired();
-                entity.Property(e => e.ContactInfo);
-                entity.Property(e => e.CreatedAt).IsRequired();
-                entity.Property(e => e.DeletedAt).HasDefaultValue(null);
-
-                entity.ToTable("incidentcomplainants");
+                entity.Property(e => e.Complainants)
+                    .HasColumnType("jsonb")
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, jsonOptions),
+                        v => JsonSerializer.Deserialize<List<ComplainantInfo>>(v, jsonOptions) ?? new List<ComplainantInfo>()
+                    )
+                    .Metadata.SetValueComparer(new ValueComparer<List<ComplainantInfo>>(
+                        // Compare two lists by serializing them to strings
+                        (c1, c2) => JsonSerializer.Serialize(c1, jsonOptions) == JsonSerializer.Serialize(c2, jsonOptions),
+                        // Generate a hash code from the serialized string
+                        c => JsonSerializer.Serialize(c, jsonOptions).GetHashCode(),
+                        // Create a copy of the list
+                        c => JsonSerializer.Deserialize<List<ComplainantInfo>>(JsonSerializer.Serialize(c, jsonOptions), jsonOptions) ?? new List<ComplainantInfo>()
+                    ));
+                //.IsRequired();
 
                 entity.HasQueryFilter(x => x.DeletedAt == null);
             });

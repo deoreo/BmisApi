@@ -1,9 +1,6 @@
 ﻿using BmisApi.Models;
-using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.Incident;
-using BmisApi.Models.DTOs.Narrative;
 using BmisApi.Repositories;
-using NuGet.Protocol.Core.Types;
 using static BmisApi.Services.PictureService;
 
 namespace BmisApi.Services.IncidentService
@@ -11,15 +8,12 @@ namespace BmisApi.Services.IncidentService
     public class IncidentService : IIncidentService
     {
         private readonly ICrudRepository<Incident> _incidentRepository;
-        private readonly ICrudRepository<Resident> _residentRepository;
         private readonly PictureService _pictureService;
 
         public IncidentService(ICrudRepository<Incident> incidentRepository, 
-            ICrudRepository<Resident> residentRepository,
             PictureService pictureService)
         {
             _incidentRepository = incidentRepository;
-            _residentRepository = residentRepository;
             _pictureService = pictureService;
         }
 

@@ -16,7 +16,6 @@ namespace BmisApi.Repositories
         public async Task<Incident?> GetByIdAsync(int id)
         {
             return await _context.Incidents
-                .Include(i => i.Complainants)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
