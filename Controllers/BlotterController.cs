@@ -13,7 +13,7 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy ="RequireSecretaryRole")]
+    [Authorize(Policy = "RequireWomanDeskRole")]
     public class BlotterController : ControllerBase
     {
         private readonly IBlotterService _service;
