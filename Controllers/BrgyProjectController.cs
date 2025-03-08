@@ -13,7 +13,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
     public class BrgyProjectController : ControllerBase
     {
         private readonly ICrudService
@@ -26,6 +25,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetBrgyProjectResponse>> GetByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -39,6 +39,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetBrgyProjectResponse>> CreateAsync(CreateBrgyProjectRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -47,11 +48,6 @@ namespace BmisApi.Controllers
                 return BadRequest("Failed to register project");
             }
 
-            // TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetResidentByIdAsync),
-            //    new { id = response.ResidentId },
-            //    response);
             return Ok(response);
         }
 
@@ -94,6 +90,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

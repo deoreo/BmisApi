@@ -1,7 +1,6 @@
 using BmisApi.Data;
 using BmisApi.Identity;
 using BmisApi.Models;
-using BmisApi.Models.DTOs.Blotter;
 using BmisApi.Models.DTOs.BrgyProject;
 using BmisApi.Repositories;
 using BmisApi.Services;

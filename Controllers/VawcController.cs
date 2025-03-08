@@ -12,7 +12,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireWomanDeskRole")]
     public class VawcController : ControllerBase
     {
         private readonly IVawcService _service;
@@ -23,6 +22,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetVawcResponse>> GetVawcByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -36,6 +36,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetVawcResponse>> CreateVawcAsync(CreateVawcRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -44,11 +45,6 @@ namespace BmisApi.Controllers
                 return BadRequest("Failed to register VAWC.");
             }
 
-            //TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetIncidentByIdAsync),
-            //    new { id = response.Id },
-            //    response);
             return Ok(response);
         }
 
@@ -92,6 +88,7 @@ namespace BmisApi.Controllers
         [HttpGet]
         [Route("get-narratives")]
         [NoAuditLog]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
         {
             var response = await _service.GetNarrativesAsync(id);
@@ -105,6 +102,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

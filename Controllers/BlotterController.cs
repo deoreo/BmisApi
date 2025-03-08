@@ -13,7 +13,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireWomanDeskRole")]
     public class BlotterController : ControllerBase
     {
         private readonly IBlotterService _service;
@@ -24,6 +23,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetBlotterResponse>> GetBlotterByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -37,6 +37,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetBlotterResponse>> CreateBlotterAsync(CreateBlotterRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -88,6 +89,7 @@ namespace BmisApi.Controllers
         [HttpGet]
         [Route("get-narratives")]
         [NoAuditLog]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
         {
             var response = await _service.GetNarrativesAsync(id);
@@ -101,6 +103,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireWomanDeskRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

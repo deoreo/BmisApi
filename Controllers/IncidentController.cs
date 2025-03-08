@@ -15,7 +15,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
     public class IncidentController : ControllerBase
     {
         private readonly IIncidentService _service;
@@ -26,6 +25,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetIncidentResponse>> GetIncidentByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -39,6 +39,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetIncidentResponse>> CreateIncidentAsync(CreateIncidentRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -47,11 +48,6 @@ namespace BmisApi.Controllers
                 return BadRequest("Failed to register incident.");
             }
 
-            //TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetIncidentByIdAsync),
-            //    new { id = response.Id },
-            //    response);
             return Ok(response);
         }
 
@@ -94,6 +90,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("upload-picture/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<IActionResult> UploadPicture(int id, IFormFile picture)
         {
             try
@@ -120,6 +117,7 @@ namespace BmisApi.Controllers
 
         [HttpDelete]
         [Route("delete-picture/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<IActionResult> DeletePicture(int id)
         {
             try
@@ -139,6 +137,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

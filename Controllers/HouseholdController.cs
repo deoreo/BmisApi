@@ -12,7 +12,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
     public class HouseholdController : ControllerBase
     {
         private readonly IHouseholdService _service;
@@ -23,6 +22,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetHouseholdResponse>> GetHouseholdByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -36,6 +36,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetHouseholdResponse>> CreateHouseholdAsync(CreateHouseholdRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -44,11 +45,6 @@ namespace BmisApi.Controllers
                 return BadRequest("Failed to register household.");
             }
 
-            // TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetResidentByIdAsync),
-            //    new { id = response.ResidentId },
-            //    response);
             return Ok(response);
         }
 
@@ -91,6 +87,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get-members")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetAllResidentResponse>> GetMembersAsync(int id)
         {
             var response = await _service.GetMembersAsync(id);
@@ -104,6 +101,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

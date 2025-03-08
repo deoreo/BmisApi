@@ -12,7 +12,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
     public class JusticeController : ControllerBase
     {
         private readonly IJusticeService _service;
@@ -23,6 +22,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetJusticeResponse>> GetJusticeByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -36,6 +36,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetJusticeResponse>> CreateJusticeAsync(CreateJusticeRequest request)
         {
             var response = await _service.CreateAsync(request);
@@ -87,6 +88,7 @@ namespace BmisApi.Controllers
         [HttpGet]
         [Route("get-narratives")]
         [NoAuditLog]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetAllNarrativeResponse>> GetNarrativeAsync(int id)
         {
             var response = await _service.GetNarrativesAsync(id);
@@ -100,6 +102,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

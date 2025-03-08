@@ -12,7 +12,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
     public class OfficialController : ControllerBase
     {
         private readonly IOfficialService _service;
@@ -24,6 +23,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetOfficialResponse>> GetOfficialByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -37,13 +37,9 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<IActionResult> CreateOfficialasync([FromBody]CreateOfficialRequest request)
         {
-            //var response = await _service.CreateAsync(request);
-            //if (response == null)
-            //{
-            //    return BadRequest("Failed to register official.");
-            //}
 
             try
             {
@@ -101,6 +97,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();

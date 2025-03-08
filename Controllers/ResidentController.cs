@@ -13,8 +13,6 @@ namespace BmisApi.Controllers
     [AuditLog]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireSecretaryRole")]
-
     public class ResidentController : ControllerBase
     {
         private readonly IResidentService _service;
@@ -25,6 +23,7 @@ namespace BmisApi.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetResidentResponse>> GetResidentByIdAsync(int id)
         {
             var response = await _service.GetByIdAsync(id);
@@ -38,6 +37,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<ActionResult<GetResidentResponse>> CreateResidentAsync(CreateResidentRequest request)
         { 
             var response = await _service.CreateAsync(request);
@@ -46,11 +46,6 @@ namespace BmisApi.Controllers
                 return BadRequest("Failed to register resident");
             }
 
-            // TODO: Change to CREATED instead of OK
-            //return CreatedAtAction(
-            //    nameof(GetResidentByIdAsync),
-            //    new { id = response.ResidentId },
-            //    response);
             return Ok(response);
         }
 
@@ -107,6 +102,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("upload-picture/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<IActionResult> UploadPicture(int id, IFormFile picture)
         {
             try
@@ -133,6 +129,7 @@ namespace BmisApi.Controllers
 
         [HttpDelete]
         [Route("delete-picture/{id}")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public async Task<IActionResult> DeletePicture(int id)
         {
             try
@@ -152,6 +149,7 @@ namespace BmisApi.Controllers
 
         [HttpPost]
         [Route("export")]
+        [Authorize(Policy = "RequireSecretaryRole")]
         public IActionResult ExportAsync()
         {
             return Ok();
